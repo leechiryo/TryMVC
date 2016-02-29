@@ -39,10 +39,10 @@
     <ClInclude Include="mvc\View.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="mvc\ModelChecker.h">
+    <ClInclude Include="mvc\App.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="mvc\App.h">
+    <ClInclude Include="mvc\Model.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
