@@ -11,7 +11,7 @@
 #include "ViewBase.h"
 
 class ModelCheckerBase {
-  typedef weak_ptr<ViewBase> PtrView;
+  typedef ViewBase *PtrView;
 private:
   set<PtrView> m_linkedViews;
 

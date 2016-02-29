@@ -9,9 +9,9 @@
 
 using namespace std;
 class App {
-  typedef shared_ptr<ViewBase> PtrView;
-  typedef shared_ptr<void> PtrModel;
-  typedef shared_ptr<ModelCheckerBase> PtrModelChecker;
+  typedef ViewBase *PtrView;
+  typedef void *PtrModel;
+  typedef ModelCheckerBase *PtrModelChecker;
 
 private:
   static map<string, PtrView> s_views;
