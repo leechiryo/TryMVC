@@ -13,7 +13,7 @@
 class ModelBase {
 
 private:
-  set <PtrView,  WeakPtrComparer<ViewBase>> m_linkedViews;
+  set <PtrView, WeakPtrComparer<ViewBase>> m_linkedViews;
 
 public:
   virtual bool ModelChanged() = 0;

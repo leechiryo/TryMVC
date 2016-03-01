@@ -31,6 +31,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     // TODO: ここにコードを挿入してください。
     mvc::m<string>("id", string("value"));
 
+
     // グローバル文字列を初期化しています。
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
     LoadStringW(hInstance, IDC_TRYMVC, szWindowClass, MAX_LOADSTRING);

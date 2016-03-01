@@ -39,7 +39,8 @@ public:
       if (sharedthis){
         m_eventHandlers[msg](sharedthis, msg);
       }
-      // todo: call App::UpdateViews
+
+      App::UpdateViews();
     }
   }
 
@@ -48,5 +49,4 @@ public:
     pfield = model;
     model->AddBindedViews(m_weakthis);
   }
-
 };
