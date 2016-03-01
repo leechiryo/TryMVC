@@ -13,11 +13,10 @@
 class ModelBase {
 
 private:
-  set <PtrView,  WeakPtrComparer> m_linkedViews;
+  set <PtrView,  WeakPtrComparer<ViewBase>> m_linkedViews;
 
 public:
   virtual bool ModelChanged() = 0;
-  virtual void * GetModelAddr() = 0;
 
   void AddBindedView(const PtrView &v) {
     m_linkedViews.insert(v);
@@ -41,20 +40,20 @@ public:
 };
 
 template <typename T>
-class Model: ModelBase {
+class Model: public ModelBase {
 private:
   T _modelCopy;
   T _model;
 
 public:
   template<typename... Args>
-  Model(Args... args) : _model(args...), _modelCopy(pModel) {
+  Model(Args... args) : _model(args...), _modelCopy(_model) {
   }
 
   bool ModelChanged() {
     bool changed = (_modelCopy != _model);
     if (changed) {
-      modelCopy = _model;
+      _modelCopy = _model;
     }
     return changed;
   }

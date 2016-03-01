@@ -11,14 +11,14 @@ class ViewBase {
 
 private:
  
-  set<PtrView, WeakPtrComparer> m_subViews;
+  set<PtrView, WeakPtrComparer<ViewBase>> m_subViews;
 
 public:
 
   ViewBase(){
   }
 
-  ViewBase(const set<PtrView, WeakPtrComparer> & views) : m_subViews(views){
+  ViewBase(const set<PtrView, WeakPtrComparer<ViewBase>> & views) : m_subViews(views){
   }
 
   double left, top, width, height;
