@@ -1,6 +1,9 @@
 #pragma once
 
-#include <list>
+#include <set>
+#include <memory>
+
+#include "WeakPtrComparer.h"
 
 using namespace std;
 
@@ -8,9 +11,15 @@ class ViewBase {
 
 private:
  
-  list<ViewBase*> m_subViews;
+  set<PtrView, WeakPtrComparer> m_subViews;
 
 public:
+
+  ViewBase(){
+  }
+
+  ViewBase(const set<PtrView, WeakPtrComparer> & views) : m_subViews(views){
+  }
 
   double left, top, width, height;
 
@@ -19,9 +28,25 @@ public:
   void Draw() {
     DrawSelf();
 
-    for (auto v : m_subViews) {
-      v->Draw();
+    for (auto it = m_subViews.begin(); it != m_subViews.end(); ++it) {
+      const auto &v = *it;
+      auto ptr = v.lock();
+
+      if (ptr){
+        ptr->Draw();
+      }
+      else if (v.expired()){
+        m_subViews.erase(it);
+      }
     }
+  }
+
+  void AddSubView(const PtrView &v){
+    m_subViews.insert(v);
+  }
+
+  void RemoveSubView(const PtrView &v){
+    m_subViews.erase(v);
   }
 
 };

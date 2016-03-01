@@ -4,6 +4,8 @@
 #include "stdafx.h"
 #include "TryMVC.h"
 
+#include "mvc\mvc.h"
+
 #define MAX_LOADSTRING 100
 
 // グローバル変数:
@@ -26,6 +28,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(lpCmdLine);
 
     // TODO: ここにコードを挿入してください。
+    mvc::m<string>("name", "value");
 
     // グローバル文字列を初期化しています。
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);

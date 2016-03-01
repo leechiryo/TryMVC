@@ -5,24 +5,25 @@
  * 发现了值发生了变化，该方法将返回True。
 */
 
-#include <set>
+#include <list>
 #include <memory>
+#include "WeakPtrComparer.h"
 #include "ViewBase.h"
 
 class ModelBase {
-  typedef weak_ptr<ViewBase> PtrView;
+
 private:
-  set<PtrView> m_linkedViews;
+  set <PtrView,  WeakPtrComparer> m_linkedViews;
 
 public:
   virtual bool ModelChanged() = 0;
   virtual void * GetModelAddr() = 0;
 
-  void AddBindedViews(const PtrView &v) {
+  void AddBindedView(const PtrView &v) {
     m_linkedViews.insert(v);
   }
 
-  void RemoveBindedViews(const PtrView &v) {
+  void RemoveBindedView(const PtrView &v) {
     m_linkedViews.erase(v);
   }
 
@@ -32,7 +33,7 @@ public:
       if (pv){
         v.lock()->Draw();
       }
-      else if (!v.expired) {
+      else if (v.expired()) {
         m_linkedViews.erase(v);
       }
     }
@@ -47,7 +48,7 @@ private:
 
 public:
   template<typename... Args>
-  ModelChecker(Args... args) : _model(args...), _modelCopy(pModel) {
+  Model(Args... args) : _model(args...), _modelCopy(pModel) {
   }
 
   bool ModelChanged() {
@@ -58,7 +59,7 @@ public:
     return changed;
   }
 
-  const T *Get() {
+  T* operator->() {
     return &_model;
   }
 };

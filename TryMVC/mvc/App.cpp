@@ -1,9 +1,9 @@
-#include "..\stdafx.h"
+#include "stdafx.h"
 #include "App.h"
+#include "View.h"
 
-set<ModelCheckerBase*> App::s_modelCheckers;
-map<string, ViewBase*> App::s_views;
-map<string, void*> App::s_models;
+map<string, App::PtrView> App::s_views;
+map<string, App::PtrModel> App::s_models;
 
 void App::Start()
 {
@@ -11,51 +11,62 @@ void App::Start()
 
 void App::UpdateViews()
 {
-  for (auto mc : s_modelCheckers) {
-    if (mc->ModelChanged()) {
-      mc->UpdateLinkedViews();
+  for (auto m : s_models) {
+    if (m.second->ModelChanged()) {
+      m.second->UpdateBindedViews();
     }
   }
 }
 
-void App::AddView(string id, ViewBase * v)
+template <typename T, typename ... Args>
+static weak_ptr<T> App::CreateView(string, Args ... args)
 {
-  s_views[id] = v;
+  if (s_views.find(id) != s_views.end()){
+    throw std::runtime_error("The id exists already." + id);
+  }
+
+  // save the weak pointer of T to the object itself.
+  shared_ptr<T> ptr = make_shared<T>(args...);
+  s_views.insert({ id, ptr });
+  
+  View<T> *pvb = ptr.get();
+  pvb->m_weakthis = ptr;
+  
+  return pvb->m_weakthis;
 }
 
-void App::AddModel(string id, void * m)
+template <typename T, typename ... Args>
+static weak_ptr<T> App::CreateModel(string, Args ... args)
 {
-  s_models[id] = m;
-}
+  if (s_models.find(id) != s_models.end()){
+    throw std::runtime_error("The id exists already." + id);
+  }
 
-void App::AddModelChecker(ModelCheckerBase *mc)
-{
-  s_modelCheckers.insert(mc);
+  auto ptr = make_shared<T>(args...);
+  s_models.insert({ id, ptr });
+
+  return weak_ptr<T>(ptr);
 }
 
 void App::RemoveView(string id)
 {
-  if (s_views.find(id) != s_views.end()) {
-    if (s_views[id] != nullptr) {
-      delete s_views[id];
-      s_views[id] = nullptr;
+  auto it = s_views.find(id);
+  if (it != s_views.end()) {
+    if (it->second) {
+      it->second.reset();
     }
-    s_views.erase(id);
+    s_views.erase(it);
   }
 }
 
 void App::RemoveModel(string id)
 {
-  if (s_models.find(id) != s_models.end()) {
-    if (s_models[id] != nullptr) {
-      delete s_models[id];
-      s_models[id] = nullptr;
+  auto it = s_models.find(id);
+  if (it != s_models.end()) {
+    if (it->second) {
+      it->second.reset();
     }
-    s_models.erase(id);
+    s_models.erase(it);
   }
 }
 
-void App::RemoveModelChecker(ModelCheckerBase *mc)
-{
-
-}
