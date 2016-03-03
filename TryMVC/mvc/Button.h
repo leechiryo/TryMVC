@@ -13,4 +13,12 @@ public:
 
   void DrawSelf(){
   }
+
+  string GetTitle() {
+    return m_title;
+  }
+
+  void SetTitle(string newval) {
+    m_title = newval;
+  }
 };

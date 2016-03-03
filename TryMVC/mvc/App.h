@@ -55,4 +55,21 @@ public:
   static void RemoveView(string);
   static void RemoveModel(string);
 
+  template <typename T>
+  static T& GetView(string id) {
+    if (s_views.find(id) == s_views.end()) {
+      throw std::runtime_error("Can not find the view.");
+    }
+    auto ptr = dynamic_pointer_cast<T, ViewBase>(s_views[id]);
+    return (*ptr);
+  }
+
+  template <typename T>
+  static T& GetModel(string id) {
+    if (s_models.find(id) == s_models.end()) {
+      throw std::runtime_error("Can not find the model.");
+    }
+    auto ptrm = dynamic_pointer_cast<Model<T>, ModelBase>(s_models[id]);
+    return ptrm->get_ref();
+  }
 };

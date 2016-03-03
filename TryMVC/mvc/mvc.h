@@ -9,12 +9,16 @@ namespace mvc {
   using namespace std;
 
   template<typename T, typename ... Args>
-  weak_ptr<T> v(string id, Args ... args){
-    return App::CreateView<T>(id, args...);
+  T& v(string id, Args ... args){
+    auto wptr = App::CreateView<T>(id, args...);
+    auto sptr = wptr.lock();
+    return (*sptr);
   }
 
   template<typename T, typename ... Args>
-  weak_ptr<Model<T>> m(string id, Args ... args){
-    return App::CreateModel<Model<T>>(id, args...);
+  T& m(string id, Args ... args){
+    auto wptr = App::CreateModel<Model<T>>(id, args...);
+    auto sptr = wptr.lock();
+    return sptr->get_ref();
   }
 }

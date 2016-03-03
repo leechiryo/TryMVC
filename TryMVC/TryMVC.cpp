@@ -31,20 +31,23 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     // TODO: ここにコードを挿入してください。
     Model<string> b("this");
-    auto m1 = mvc::m<string>("id", "value");
-    auto ptr = (*m1.lock());
-    
-    map<int, string> test;
-    test.insert({ 1, "my page" });
-    
-    string &a = test[1];
-    MessageBoxA(0, a.c_str(), "test", 0);
-    a = "your page";
-    MessageBoxA(0, a.c_str(), "test", 0);
-    MessageBoxA(0, test[1].c_str(), "test", 0);
+    auto &m1 = mvc::m<string>("id", "value");
+    MessageBoxA(0, m1.c_str(), "test", 0);
 
+    m1 = "new value";
+    MessageBoxA(0, m1.c_str(), "test", 0);
 
-    mvc::v<Button>("btn1", "My Button");
+    auto &m2 = App::GetModel<string>("id");
+    MessageBoxA(0, m2.c_str(), "test", 0);
+
+    auto &btn = mvc::v<Button>("btn1", "My Button");
+    MessageBoxA(0, btn.GetTitle().c_str(), "test", 0);
+
+    btn.SetTitle("Your Button");
+    MessageBoxA(0, btn.GetTitle().c_str(), "test", 0);
+
+    auto &btn2 = App::GetView<Button>("btn1");
+    MessageBoxA(0, btn2.GetTitle().c_str(), "test", 0);
 
     // グローバル文字列を初期化しています。
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);

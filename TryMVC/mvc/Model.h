@@ -59,7 +59,7 @@ public:
     return changed;
   }
 
-  T* operator->() {
-    return &_model;
+  T& get_ref() {
+    return _model;
   }
 };
