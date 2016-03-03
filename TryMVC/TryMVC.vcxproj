@@ -150,6 +150,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="mvc\App.h" />
+    <ClInclude Include="mvc\Button.h" />
     <ClInclude Include="mvc\Model.h" />
     <ClInclude Include="mvc\mvc.h" />
     <ClInclude Include="mvc\View.h" />

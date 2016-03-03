@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "TryMVC.h"
 
+#include "mvc\Button.h"
 #include "mvc\mvc.h"
 
 #define MAX_LOADSTRING 100
@@ -29,8 +30,21 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(lpCmdLine);
 
     // TODO: ここにコードを挿入してください。
-    mvc::m<string>("id", string("value"));
+    Model<string> b("this");
+    auto m1 = mvc::m<string>("id", "value");
+    auto ptr = (*m1.lock());
+    
+    map<int, string> test;
+    test.insert({ 1, "my page" });
+    
+    string &a = test[1];
+    MessageBoxA(0, a.c_str(), "test", 0);
+    a = "your page";
+    MessageBoxA(0, a.c_str(), "test", 0);
+    MessageBoxA(0, test[1].c_str(), "test", 0);
 
+
+    mvc::v<Button>("btn1", "My Button");
 
     // グローバル文字列を初期化しています。
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);

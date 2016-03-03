@@ -6,6 +6,7 @@
 #include "Model.h"
 #include "ViewBase.h"
 #include "App.h"
+#include "WeakPtrComparer.h"
 
 using namespace std;
 
@@ -23,7 +24,7 @@ public:
   View() : ViewBase(){
   }
 
-  View(const list<ViewBase::PtrView> & views) : ViewBase(views){
+  View(const list<PtrView> & views) : ViewBase(views){
   }
 
   void AddEventHandler(int msg, ControllerMethod method) {

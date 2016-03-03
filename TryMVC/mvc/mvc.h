@@ -10,7 +10,7 @@ namespace mvc {
 
   template<typename T, typename ... Args>
   weak_ptr<T> v(string id, Args ... args){
-    return App::CreateView(id, args);
+    return App::CreateView<T>(id, args...);
   }
 
   template<typename T, typename ... Args>

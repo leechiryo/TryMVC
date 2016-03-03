@@ -47,7 +47,8 @@ private:
 
 public:
   template<typename... Args>
-  Model(Args... args) : _model(args...), _modelCopy(_model) {
+  Model(Args... args) : _model(args...) {
+    _modelCopy = _model;
   }
 
   bool ModelChanged() {
