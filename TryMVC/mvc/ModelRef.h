@@ -75,7 +75,7 @@ public:
     m_wpChecker = mObj;
     auto spMObj = mObj.lock();
     if (spMObj) {
-      m_modelPtr = &(*spMObj);
+      m_modelPtr = &(spMObj->get_ref());
       return true;
     }
     return false;

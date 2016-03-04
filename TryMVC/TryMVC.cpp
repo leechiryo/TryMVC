@@ -58,7 +58,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
   r1.Bind<C>(spm9, &C::d);
   auto m9ac = r1.GetAccessor();
   m9ac = 1.2;
-
+  
+  ModelRef<C> cref;
+  cref.Bind<C>(spm9);
+  cref.GetAccessor()->a = 10;
 
   // TODO: ここにコードを挿入してください。
   Model<string> b("this");
