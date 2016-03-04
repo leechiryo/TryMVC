@@ -14,6 +14,19 @@ HINSTANCE hInst;                                // 現在のインターフェイス
 WCHAR szTitle[MAX_LOADSTRING];                  // タイトル バーのテキスト
 WCHAR szWindowClass[MAX_LOADSTRING];            // メイン ウィンドウ クラス名
 
+struct C{
+  int a;
+  int b;
+  char c;
+  double d;
+};
+
+template<typename T>
+bool objsptr(T * obj, void *ptr){
+  char * objaddr = reinterpret_cast<char*>(obj);
+  char * ptraddr = reinterpret_cast<char*>(ptr);
+  return (ptraddr > objaddr) && ((ptraddr - objaddr) < sizeof(T));
+}
 
 // このコード モジュールに含まれる関数の宣言を転送します:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -22,59 +35,74 @@ LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
-                     _In_opt_ HINSTANCE hPrevInstance,
-                     _In_ LPWSTR    lpCmdLine,
-                     _In_ int       nCmdShow)
+  _In_opt_ HINSTANCE hPrevInstance,
+  _In_ LPWSTR    lpCmdLine,
+  _In_ int       nCmdShow)
 {
-    UNREFERENCED_PARAMETER(hPrevInstance);
-    UNREFERENCED_PARAMETER(lpCmdLine);
+  UNREFERENCED_PARAMETER(hPrevInstance);
+  UNREFERENCED_PARAMETER(lpCmdLine);
 
-    // TODO: ここにコードを挿入してください。
-    Model<string> b("this");
-    auto &m1 = mvc::m<string>("id", "value");
-    MessageBoxA(0, m1.c_str(), "test", 0);
+  string test;
+  stringstream ss;
+  int C::* p = &C::a;
+  C c;
+  C d;
 
-    m1 = "new value";
-    MessageBoxA(0, m1.c_str(), "test", 0);
+  int *p1 = &c.b;
 
-    auto &m2 = mvc::getm<string>("id");
-    MessageBoxA(0, m2.c_str(), "test", 0);
+  c.a = 10;
+  c.b = 20;
+  c.c = 11;
+  c.d = 1.0;
+  ss << objsptr(&d, p1) << endl;
+  MessageBoxA(0, ss.str().c_str(), "test", 0);
 
-    auto &btn = mvc::v<Button>("btn1", "My Button");
-    MessageBoxA(0, btn.GetTitle().c_str(), "test", 0);
+  // TODO: ここにコードを挿入してください。
+  Model<string> b("this");
+  auto &m1 = mvc::m<string>("id", "value");
+  MessageBoxA(0, m1.c_str(), "test", 0);
 
-    btn.SetTitle("Your Button");
-    MessageBoxA(0, btn.GetTitle().c_str(), "test", 0);
+  m1 = "new value";
+  MessageBoxA(0, m1.c_str(), "test", 0);
 
-    auto &btn2 = mvc::getv<Button>("btn1");
-    MessageBoxA(0, btn2.GetTitle().c_str(), "test", 0);
+  auto &m2 = mvc::getm<string>("id");
+  MessageBoxA(0, m2.c_str(), "test", 0);
 
-    // グローバル文字列を初期化しています。
-    LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
-    LoadStringW(hInstance, IDC_TRYMVC, szWindowClass, MAX_LOADSTRING);
-    MyRegisterClass(hInstance);
+  auto &btn = mvc::v<Button>("btn1", "My Button");
+  MessageBoxA(0, btn.GetTitle().c_str(), "test", 0);
 
-    // アプリケーションの初期化を実行します:
-    if (!InitInstance (hInstance, nCmdShow))
+  btn.SetTitle("Your Button");
+  MessageBoxA(0, btn.GetTitle().c_str(), "test", 0);
+
+  auto &btn2 = mvc::getv<Button>("btn1");
+  MessageBoxA(0, btn2.GetTitle().c_str(), "test", 0);
+
+  // グローバル文字列を初期化しています。
+  LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
+  LoadStringW(hInstance, IDC_TRYMVC, szWindowClass, MAX_LOADSTRING);
+  MyRegisterClass(hInstance);
+
+  // アプリケーションの初期化を実行します:
+  if (!InitInstance(hInstance, nCmdShow))
+  {
+    return FALSE;
+  }
+
+  HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_TRYMVC));
+
+  MSG msg;
+
+  // メイン メッセージ ループ:
+  while (GetMessage(&msg, nullptr, 0, 0))
+  {
+    if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
     {
-        return FALSE;
+      TranslateMessage(&msg);
+      DispatchMessage(&msg);
     }
+  }
 
-    HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_TRYMVC));
-
-    MSG msg;
-
-    // メイン メッセージ ループ:
-    while (GetMessage(&msg, nullptr, 0, 0))
-    {
-        if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
-        {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
-        }
-    }
-
-    return (int) msg.wParam;
+  return (int)msg.wParam;
 }
 
 
@@ -86,23 +114,23 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 //
 ATOM MyRegisterClass(HINSTANCE hInstance)
 {
-    WNDCLASSEXW wcex;
+  WNDCLASSEXW wcex;
 
-    wcex.cbSize = sizeof(WNDCLASSEX);
+  wcex.cbSize = sizeof(WNDCLASSEX);
 
-    wcex.style          = CS_HREDRAW | CS_VREDRAW;
-    wcex.lpfnWndProc    = WndProc;
-    wcex.cbClsExtra     = 0;
-    wcex.cbWndExtra     = 0;
-    wcex.hInstance      = hInstance;
-    wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_TRYMVC));
-    wcex.hCursor        = LoadCursor(nullptr, IDC_ARROW);
-    wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
-    wcex.lpszMenuName   = MAKEINTRESOURCEW(IDC_TRYMVC);
-    wcex.lpszClassName  = szWindowClass;
-    wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
+  wcex.style = CS_HREDRAW | CS_VREDRAW;
+  wcex.lpfnWndProc = WndProc;
+  wcex.cbClsExtra = 0;
+  wcex.cbWndExtra = 0;
+  wcex.hInstance = hInstance;
+  wcex.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_TRYMVC));
+  wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
+  wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+  wcex.lpszMenuName = MAKEINTRESOURCEW(IDC_TRYMVC);
+  wcex.lpszClassName = szWindowClass;
+  wcex.hIconSm = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
-    return RegisterClassExW(&wcex);
+  return RegisterClassExW(&wcex);
 }
 
 //
@@ -117,20 +145,20 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 //
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
-   hInst = hInstance; // グローバル変数にインスタンス処理を格納します。
+  hInst = hInstance; // グローバル変数にインスタンス処理を格納します。
 
-   HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
+  HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
+    CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
 
-   if (!hWnd)
-   {
-      return FALSE;
-   }
+  if (!hWnd)
+  {
+    return FALSE;
+  }
 
-   ShowWindow(hWnd, nCmdShow);
-   UpdateWindow(hWnd);
+  ShowWindow(hWnd, nCmdShow);
+  UpdateWindow(hWnd);
 
-   return TRUE;
+  return TRUE;
 }
 
 //
@@ -145,58 +173,58 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    switch (message)
+  switch (message)
+  {
+  case WM_COMMAND:
+  {
+    int wmId = LOWORD(wParam);
+    // 選択されたメニューの解析:
+    switch (wmId)
     {
-    case WM_COMMAND:
-        {
-            int wmId = LOWORD(wParam);
-            // 選択されたメニューの解析:
-            switch (wmId)
-            {
-            case IDM_ABOUT:
-                DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-                break;
-            case IDM_EXIT:
-                DestroyWindow(hWnd);
-                break;
-            default:
-                return DefWindowProc(hWnd, message, wParam, lParam);
-            }
-        }
-        break;
-    case WM_PAINT:
-        {
-            PAINTSTRUCT ps;
-            HDC hdc = BeginPaint(hWnd, &ps);
-            // TODO: HDC を使用する描画コードをここに追加してください...
-            EndPaint(hWnd, &ps);
-        }
-        break;
-    case WM_DESTROY:
-        PostQuitMessage(0);
-        break;
+    case IDM_ABOUT:
+      DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
+      break;
+    case IDM_EXIT:
+      DestroyWindow(hWnd);
+      break;
     default:
-        return DefWindowProc(hWnd, message, wParam, lParam);
+      return DefWindowProc(hWnd, message, wParam, lParam);
     }
-    return 0;
+  }
+  break;
+  case WM_PAINT:
+  {
+    PAINTSTRUCT ps;
+    HDC hdc = BeginPaint(hWnd, &ps);
+    // TODO: HDC を使用する描画コードをここに追加してください...
+    EndPaint(hWnd, &ps);
+  }
+  break;
+  case WM_DESTROY:
+    PostQuitMessage(0);
+    break;
+  default:
+    return DefWindowProc(hWnd, message, wParam, lParam);
+  }
+  return 0;
 }
 
 // バージョン情報ボックスのメッセージ ハンドラーです。
 INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    UNREFERENCED_PARAMETER(lParam);
-    switch (message)
-    {
-    case WM_INITDIALOG:
-        return (INT_PTR)TRUE;
+  UNREFERENCED_PARAMETER(lParam);
+  switch (message)
+  {
+  case WM_INITDIALOG:
+    return (INT_PTR)TRUE;
 
-    case WM_COMMAND:
-        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
-        {
-            EndDialog(hDlg, LOWORD(wParam));
-            return (INT_PTR)TRUE;
-        }
-        break;
+  case WM_COMMAND:
+    if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
+    {
+      EndDialog(hDlg, LOWORD(wParam));
+      return (INT_PTR)TRUE;
     }
-    return (INT_PTR)FALSE;
+    break;
+  }
+  return (INT_PTR)FALSE;
 }
