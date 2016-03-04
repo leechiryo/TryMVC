@@ -45,9 +45,9 @@ public:
     }
   }
 
-  template<typename FieldType>
-  void bind(weak_ptr<Model<FieldType>> &pfield, weak_ptr<Model<FieldType>> &model) {
-    pfield = model;
-    model->AddBindedViews(m_weakthis);
-  }
+  //template<typename FieldType>
+  //void bind(weak_ptr<Model<FieldType>> &pfield, weak_ptr<Model<FieldType>> &model) {
+  //  pfield = model;
+  //  model->AddBindedViews(m_weakthis);
+  //}
 };

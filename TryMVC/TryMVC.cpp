@@ -6,6 +6,7 @@
 
 #include "mvc\Button.h"
 #include "mvc\mvc.h"
+#include "mvc\ModelRef.h"
 
 #define MAX_LOADSTRING 100
 
@@ -20,6 +21,14 @@ struct C{
   char c;
   double d;
 };
+
+bool operator==(const C &x, const C &y) {
+  return x.a == y.a && x.b == y.b && x.c == y.c && x.d == y.d;
+}
+
+bool operator!=(const C &x, const C &y) {
+  return !(x == y);
+}
 
 template<typename T>
 bool objsptr(T * obj, void *ptr){
@@ -42,20 +51,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
   UNREFERENCED_PARAMETER(hPrevInstance);
   UNREFERENCED_PARAMETER(lpCmdLine);
 
-  string test;
-  stringstream ss;
-  int C::* p = &C::a;
-  C c;
-  C d;
+  // test model and modelref and modelaccessor
+  auto &m9 = mvc::m<C>("me");
+  ModelRef<double> r1(0.0);
+  auto spm9 = App::GetModel<C>("me");
+  r1.Bind<C>(spm9, &C::d);
+  auto m9ac = r1.GetAccessor();
+  m9ac = 1.2;
 
-  int *p1 = &c.b;
-
-  c.a = 10;
-  c.b = 20;
-  c.c = 11;
-  c.d = 1.0;
-  ss << objsptr(&d, p1) << endl;
-  MessageBoxA(0, ss.str().c_str(), "test", 0);
 
   // TODO: ここにコードを挿入してください。
   Model<string> b("this");

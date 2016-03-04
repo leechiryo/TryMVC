@@ -24,11 +24,13 @@ namespace mvc {
 
   template<typename T>
   T& getv(string id) {
-    return App::GetView<T>(id);
+    auto sp = App::GetView<T>(id);
+    return (*sp);
   }
 
   template<typename T>
   T& getm(string id) {
-    return App::GetModel<T>(id);
+    auto sp = App::GetModel<T>(id);
+    return sp->get_ref();
   }
 }
