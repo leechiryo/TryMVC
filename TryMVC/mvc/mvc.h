@@ -21,4 +21,14 @@ namespace mvc {
     auto sptr = wptr.lock();
     return sptr->get_ref();
   }
+
+  template<typename T>
+  T& getv(string id) {
+    return App::GetView<T>(id);
+  }
+
+  template<typename T>
+  T& getm(string id) {
+    return App::GetModel<T>(id);
+  }
 }

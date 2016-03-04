@@ -37,7 +37,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     m1 = "new value";
     MessageBoxA(0, m1.c_str(), "test", 0);
 
-    auto &m2 = App::GetModel<string>("id");
+    auto &m2 = mvc::getm<string>("id");
     MessageBoxA(0, m2.c_str(), "test", 0);
 
     auto &btn = mvc::v<Button>("btn1", "My Button");
@@ -46,7 +46,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     btn.SetTitle("Your Button");
     MessageBoxA(0, btn.GetTitle().c_str(), "test", 0);
 
-    auto &btn2 = App::GetView<Button>("btn1");
+    auto &btn2 = mvc::getv<Button>("btn1");
     MessageBoxA(0, btn2.GetTitle().c_str(), "test", 0);
 
     // グローバル文字列を初期化しています。
