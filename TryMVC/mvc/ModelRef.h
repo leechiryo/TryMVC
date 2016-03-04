@@ -67,7 +67,17 @@ public:
       m_modelPtr = &(spMObj->get_ref().*mPtr);
       return true;
     }
+    return false;
+  }
 
+  template<typename M>
+  bool Bind(weak_ptr<Model<M>> mObj) {
+    m_wpChecker = mObj;
+    auto spMObj = mObj.lock();
+    if (spMObj) {
+      m_modelPtr = &(*spMObj);
+      return true;
+    }
     return false;
   }
 
