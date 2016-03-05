@@ -46,8 +46,8 @@ bool objsptr(T * obj, void *ptr){
 
 // test the model delete.
 void test_delete() {
-  auto &model = mvc::m<C>("delete");
-  App::RemoveModel("delete");  // -- delete the model here.
+  auto &model = mvc::m<C>("delete");  // create a new model.
+  App::RemoveModel("delete");  // ** model deleted here.
 }
 
 void stubfunc(shared_ptr<Model<C>> ptr) {
@@ -56,20 +56,19 @@ void stubfunc(shared_ptr<Model<C>> ptr) {
 
 // test the model delete.
 void test_delete2() {
-  auto &model = mvc::m<C>("delete2");
-  stubfunc(App::GetModel<C>("delete2"));
+  auto &model = mvc::m<C>("delete2");                // create a new model.
+  stubfunc(App::GetModel<C>("delete2"));             // get a shared pointer of the model.
 
-  ModelRef<double> refd{ 0.0 }; // define a new model ref
-  refd.Bind<C>(App::GetModel<C>("delete2"), &C::d);
+  ModelRef<double> refd{ 0.0 };                      // define a new model ref
+  refd.Bind<C>("delete2", &C::d);  // bind the ref to the new model.
+  auto &accd = refd.Access();                        // get accessor to the new model from the model ref.
 
-  auto &accd = refd.GetAccessor(); // accd to d
+  accd = 2.0;                                        // access the model from the accessor.
 
-  accd = 2.0;
+  App::RemoveModel("delete2");                       // release the shared pointer.
 
-  App::RemoveModel("delete2");
-
-  accd = 5.0;
-} // -- delete the model here.
+  accd = 5.0;                                        // access the model from the accessor.
+} // ** model deleted here.
 
 // test the model delete.
 void test_delete3() {
@@ -77,14 +76,14 @@ void test_delete3() {
   stubfunc(App::GetModel<C>("delete3"));
 
   ModelRef<double> refd{ 0.0 }; // define a new model ref
-  refd.Bind<C>(App::GetModel<C>("delete3"), &C::d);
+  refd.Bind<C>("delete3", &C::d);
 
-  refd.GetAccessor() = 2.0;
+  refd.Access() = 2.0;
 
-  App::RemoveModel("delete3"); // -- model deleted here.
+  App::RemoveModel("delete3"); // ** model deleted here.
 
-  refd.GetAccessor() = 5.0;  // will change a value of inner fallback.
-                             // model won't be changed which is already destoried.
+  refd.Access() = 5.0;  // will change a value of inner fallback.
+                        // the destroied model won't be accessed.
 }
 
 // このコード モジュールに含まれる関数の宣言を転送します:
@@ -105,19 +104,17 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
   auto &m9 = mvc::m<C>("me");
   ModelRef<double> r1(0.0);
   auto spm9 = App::GetModel<C>("me");
-  r1.Bind<C>(spm9, &C::d);
-  auto m9ac = r1.GetAccessor();
+  r1.Bind<C>("me", &C::d);
+  auto m9ac = r1.Access();
   m9ac = 1.2;
   
   ModelRef<C> cref;
-  cref.Bind<C>(spm9);
-  cref.GetAccessor()->a = 10;
+  cref.Bind<C>("me");
+  cref.Access()->a = 10;
 
   //test delete
   test_delete();
-
   test_delete2();
-
   test_delete3();
 
 
@@ -133,13 +130,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
   MessageBoxA(0, m2.c_str(), "test", 0);
 
   auto &btn = mvc::v<Button>("btn1", "My Button");
-  MessageBoxA(0, btn.GetTitle().c_str(), "test", 0);
+  btn.title.Bind<string>("id");
+  MessageBoxA(0, btn.title.Access()->c_str(), "test", 0);
 
-  btn.SetTitle("Your Button");
-  MessageBoxA(0, btn.GetTitle().c_str(), "test", 0);
+  m2 = "button value";
+  MessageBoxA(0, btn.title.Access()->c_str(), "test", 0);
 
-  auto &btn2 = mvc::getv<Button>("btn1");
-  MessageBoxA(0, btn2.GetTitle().c_str(), "test", 0);
 
   // グローバル文字列を初期化しています。
   LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);

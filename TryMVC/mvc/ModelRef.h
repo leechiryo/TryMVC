@@ -2,6 +2,7 @@
 
 #include <memory>
 #include "Model.h"
+#include "App.h"
 
 using namespace std;
 
@@ -31,6 +32,10 @@ public:
     if (m_spModel) return m_fieldPtr;
     else return nullptr;
   }
+
+  operator T() {
+    return *m_fieldPtr;
+  }
 };
 
 struct C;
@@ -54,22 +59,22 @@ public:
   }
 
   template<typename M>
-  void Bind(weak_ptr<Model<M>> mObj, double M::*mPtr) {
-    m_wpChecker = mObj;
-    auto spMObj = mObj.lock();
-    if (spMObj) {
-      m_modelPtr = &(spMObj->get_ref().*mPtr);
+  void Bind(string modelId, double M::*mPtr) {
+    auto spModel = App::GetModel<M>(modelId);
+    m_wpChecker = spModel;
+    if (spModel) {
+      m_modelPtr = &(spModel->get_ref().*mPtr);
     } else {
       throw runtime_error("Can not bind to an object which is destroied.");
     }
   }
 
   template<typename M>
-  void Bind(weak_ptr<Model<M>> mObj) {
-    m_wpChecker = mObj;
-    auto spMObj = mObj.lock();
-    if (spMObj) {
-      m_modelPtr = &(spMObj->get_ref());
+  void Bind(string modelId) {
+    auto spModel = App::GetModel<M>(modelId);
+    m_wpChecker = spModel;
+    if (spModel) {
+      m_modelPtr = &(spModel->get_ref());
     } else {
       throw runtime_error("Can not bind to an object which is destroied.");
     }
@@ -80,7 +85,7 @@ public:
     m_modelPtr = &m_fallback;
   }
 
-  ModelAccessor<T> GetAccessor() {
+  ModelAccessor<T> Access() {
     auto sp = m_wpChecker.lock();
     if (!sp) UnBind();
     return ModelAccessor<T>{m_modelPtr, sp};
