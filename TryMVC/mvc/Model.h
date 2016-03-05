@@ -9,6 +9,12 @@
 #include <memory>
 #include "WeakPtrComparer.h"
 #include "ViewBase.h"
+#include "ModelAccessor.h"
+
+template<typename T>
+class ModelRef;
+
+class App;
 
 class ModelBase {
 
@@ -29,7 +35,7 @@ public:
   void UpdateBindedViews() {
     for (auto v : m_linkedViews) {
       auto pv = v.lock();
-      if (pv){
+      if (pv) {
         v.lock()->Draw();
       }
       else if (v.expired()) {
@@ -40,10 +46,27 @@ public:
 };
 
 template <typename T>
-class Model: public ModelBase {
+class Model : public ModelBase {
+  friend class App;
+  friend class ModelRef<T>;
+
 private:
   T _modelCopy;
   T _model;
+  weak_ptr<Model<T>> _wpThis;
+
+  ModelAccessor<T> get_accessor() {
+    auto spThis = _wpThis.lock();
+    if (spThis) {
+      return ModelAccessor<T>{&_model, spThis};
+    } else {
+      throw runtime_error("The model has been deleted.");
+    }
+  }
+
+  T* get_ptr() {
+    return &_model;
+  }
 
 public:
   template<typename... Args>
@@ -57,9 +80,5 @@ public:
       _modelCopy = _model;
     }
     return changed;
-  }
-
-  T& get_ref() {
-    return _model;
   }
 };

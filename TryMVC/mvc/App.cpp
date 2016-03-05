@@ -34,6 +34,7 @@ void App::RemoveModel(string id)
   auto it = s_models.find(id);
   if (it != s_models.end()) {
     if (it->second) {
+      int cnt = it->second.use_count();
       it->second.reset();
     }
     s_models.erase(it);

@@ -20,6 +20,13 @@ struct C {
   int b;
   char c;
   double d;
+  ~C() {
+
+    stringstream ss;
+    ss << "C object is deleted. [" << this << "]"<< endl;
+
+    MessageBoxA(0, ss.str().c_str(), "test", 0);
+  }
 };
 
 bool operator==(const C &x, const C &y) {
@@ -37,6 +44,84 @@ bool objsptr(T * obj, void *ptr) {
   return (ptraddr > objaddr) && ((ptraddr - objaddr) < sizeof(T));
 }
 
+// test the model delete.
+void test_delete() {
+  mvc::m<C>("delete");  // create a new model.
+  App::RemoveModel("delete");  // ** model deleted here.
+}
+
+void stubfunc(ModelAccessor<C> ptr) {
+  
+}
+
+// test the model delete.
+void test_delete2() {
+  mvc::m<C>("delete2");                // create a new model.
+  stubfunc(App::GetModel<C>("delete2"));             // get a shared pointer of the model.
+
+  ModelRef<double> refd{ 0.0 };                      // define a new model ref
+  refd.Bind<C>("delete2", &C::d);  // bind the ref to the new model.
+  auto &accd = refd.Access();                        // get accessor to the new model from the model ref.
+
+  accd = 2.0;                                        // access the model from the accessor.
+
+  App::RemoveModel("delete2");                       // release the shared pointer.
+
+  accd = 5.0;                                        // access the model from the accessor.
+} // ** model deleted here.
+
+// test the model delete.
+void test_delete3() {
+  mvc::m<C>("delete3");
+  stubfunc(App::GetModel<C>("delete3"));
+
+  ModelRef<double> refd{ 0.0 }; // define a new model ref
+  refd.Bind<C>("delete3", &C::d);
+
+  refd.Access() = 2.0;
+
+  App::RemoveModel("delete3"); // ** model deleted here.
+
+  refd.Access() = 5.0;  // will change a value of inner fallback.
+                        // the destroied model won't be accessed.
+}
+
+void do_test() {
+  // test model and modelref and modelaccessor
+  auto m9 = mvc::m<C>("me");   // create new model.
+  m9->d = 2.4;                 // update the model value.
+  ModelRef<double> r1(0.0);    // create a model reference.
+  r1.Bind<C>("me", &C::d);     // bind the model reference to "a field of a model".
+  auto m9ac = r1.Access();     // get the access to binding field.
+  m9ac = 1.2;                  // set the binding field value.
+
+  ModelRef<C> cref;            // create a model reference.
+  cref.Bind("me");             // bind the model reference to "model itself".
+  cref.Access()->a = 10;       // access the model.
+
+  //test delete
+  test_delete();
+  test_delete2();
+  test_delete3();
+
+  // TODO: ここにコードを挿入してください。
+  auto m1 = mvc::m<string>("id", "value");  // create a new model.
+  MessageBoxA(0, m1->c_str(), "test", 0);     // the output should be "value".
+
+  m1 = "new value";                          // update the model value.
+  MessageBoxA(0, m1->c_str(), "test", 0);     // the output should be "new value".
+
+  auto m2 = mvc::getm<string>("id");        // get the model from its id.
+  MessageBoxA(0, m2->c_str(), "test", 0);     // the output should be "new value".
+
+  auto btn = mvc::v<Button>("btn1", "My Button"); // create a new view.
+  btn->title.Bind("id");                    // bind the view's field with a model.
+  MessageBoxA(0, btn->title.Access()->c_str(), "test", 0);  // the output should be "new value" (the model's value).
+
+  m2 = "button value";                                     // update the model.
+  MessageBoxA(0, btn->title.Access()->c_str(), "test", 0);  // the output of the view should be "button value" (updated with the model).
+}
+
 // このコード モジュールに含まれる関数の宣言を転送します:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
@@ -51,47 +136,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
   UNREFERENCED_PARAMETER(hPrevInstance);
   UNREFERENCED_PARAMETER(lpCmdLine);
 
-  // test model and modelref and modelaccessor
-  auto &m9 = mvc::m<C>("me");
-  ModelRef<double> r1(0.0);
-  auto spm9 = App::GetModel<C>("me");
-  r1.Bind<C>(spm9, &C::d);
-  auto m9ac = r1.GetAccessor();
-  m9ac = 1.2;
+  // do some test about the model and view.
+  do_test();
 
-  ModelRef<C> cref;
-  cref.Bind<C>(spm9);
-  cref.GetAccessor()->a = 10;
-
-  // unbind test.
-  r1.UnBind();
-  r1.GetAccessor() = 2.8;
-
-  cref.UnBind();
-  cref.GetAccessor()->b = 20;
-
-  // TODO: rebind and test delete.
-
-
-  // TODO: ここにコードを挿入してください。
-  Model<string> b("this");
-  auto &m1 = mvc::m<string>("id", "value");
-  MessageBoxA(0, m1.c_str(), "test", 0);
-
-  m1 = "new value";
-  MessageBoxA(0, m1.c_str(), "test", 0);
-
-  auto &m2 = mvc::getm<string>("id");
-  MessageBoxA(0, m2.c_str(), "test", 0);
-
-  auto &btn = mvc::v<Button>("btn1", "My Button");
-  MessageBoxA(0, btn.GetTitle().c_str(), "test", 0);
-
-  btn.SetTitle("Your Button");
-  MessageBoxA(0, btn.GetTitle().c_str(), "test", 0);
-
-  auto &btn2 = mvc::getv<Button>("btn1");
-  MessageBoxA(0, btn2.GetTitle().c_str(), "test", 0);
 
   // グローバル文字列を初期化しています。
   LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);

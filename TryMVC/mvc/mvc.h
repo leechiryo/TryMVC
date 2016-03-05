@@ -9,17 +9,13 @@ namespace mvc {
   using namespace std;
 
   template<typename T, typename ... Args>
-  T& v(string id, Args ... args){
-    auto wptr = App::CreateView<T>(id, args...);
-    auto sptr = wptr.lock();
-    return (*sptr);
+  shared_ptr<T> v(string id, Args ... args){
+    return App::CreateView<T>(id, args...);
   }
 
   template<typename T, typename ... Args>
-  T& m(string id, Args ... args){
-    auto wptr = App::CreateModel<Model<T>>(id, args...);
-    auto sptr = wptr.lock();
-    return sptr->get_ref();
+  ModelAccessor<T> m(string id, Args ... args){
+    return App::CreateModel<T>(id, args...);
   }
 
   template<typename T>
@@ -29,8 +25,7 @@ namespace mvc {
   }
 
   template<typename T>
-  T& getm(string id) {
-    auto sp = App::GetModel<T>(id);
-    return sp->get_ref();
+  ModelAccessor<T> getm(string id) {
+    return App::GetModel<T>(id);
   }
 }
