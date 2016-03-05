@@ -15,7 +15,7 @@ HINSTANCE hInst;                                // 現在のインターフェイス
 WCHAR szTitle[MAX_LOADSTRING];                  // タイトル バーのテキスト
 WCHAR szWindowClass[MAX_LOADSTRING];            // メイン ウィンドウ クラス名
 
-struct C{
+struct C {
   int a;
   int b;
   char c;
@@ -31,7 +31,7 @@ bool operator!=(const C &x, const C &y) {
 }
 
 template<typename T>
-bool objsptr(T * obj, void *ptr){
+bool objsptr(T * obj, void *ptr) {
   char * objaddr = reinterpret_cast<char*>(obj);
   char * ptraddr = reinterpret_cast<char*>(ptr);
   return (ptraddr > objaddr) && ((ptraddr - objaddr) < sizeof(T));
@@ -58,10 +58,20 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
   r1.Bind<C>(spm9, &C::d);
   auto m9ac = r1.GetAccessor();
   m9ac = 1.2;
-  
+
   ModelRef<C> cref;
   cref.Bind<C>(spm9);
   cref.GetAccessor()->a = 10;
+
+  // unbind test.
+  r1.UnBind();
+  r1.GetAccessor() = 2.8;
+
+  cref.UnBind();
+  cref.GetAccessor()->b = 20;
+
+  // TODO: rebind and test delete.
+
 
   // TODO: ここにコードを挿入してください。
   Model<string> b("this");

@@ -45,26 +45,26 @@ template<typename T>
 class ModelRef {
 private:
   T m_fallback;
-  T *m_modelPtr;
-  weak_ptr<ModelBase> m_wpChecker;
+  T *m_fieldPtr;
+  weak_ptr<ModelBase> m_wpModel;
 
 public:
 
   template<typename ... Args>
   ModelRef(Args ... args) : m_fallback(args...) {
-    m_modelPtr = &m_fallback;
+    m_fieldPtr = &m_fallback;
   }
 
   ~ModelRef() {
-    m_wpChecker.reset();
+    m_wpModel.reset();
   }
 
   template<typename M>
   bool Bind(weak_ptr<Model<M>> mObj, double M::*mPtr) {
-    m_wpChecker = mObj;
+    m_wpModel = mObj;
     auto spMObj = mObj.lock();
     if (spMObj) {
-      m_modelPtr = &(spMObj->get_ref().*mPtr);
+      m_fieldPtr = &(spMObj->get_ref().*mPtr);
       return true;
     }
     return false;
@@ -72,23 +72,23 @@ public:
 
   template<typename M>
   bool Bind(weak_ptr<Model<M>> mObj) {
-    m_wpChecker = mObj;
+    m_wpModel = mObj;
     auto spMObj = mObj.lock();
     if (spMObj) {
-      m_modelPtr = &(spMObj->get_ref());
+      m_fieldPtr = &(spMObj->get_ref());
       return true;
     }
     return false;
   }
 
   void UnBind() {
-    m_fallback = *m_modelPtr;
-    m_modelPtr = &m_fallback;
+    m_fallback = *m_fieldPtr;
+    m_fieldPtr = &m_fallback;
   }
 
   ModelAccessor<T> GetAccessor() {
-    auto sp = m_wpChecker.lock();
-    return ModelAccessor<T>{m_modelPtr, sp};
+    auto sp = m_wpModel.lock();
+    return ModelAccessor<T>{m_fieldPtr, sp};
   }
 
 };
