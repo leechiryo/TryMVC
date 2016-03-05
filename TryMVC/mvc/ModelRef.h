@@ -22,12 +22,6 @@ public:
     return *this;
   }
 
-  ModelAccessor<T>& operator=(const ModelAccessor<T> &val) {
-    m_fieldPtr = val.m_fieldPtr;
-    m_spModel = val.m_spModel;
-    return *this;
-  }
-
   operator bool() const {
     if (m_spModel) return true;
     else return false;
@@ -60,25 +54,25 @@ public:
   }
 
   template<typename M>
-  bool Bind(weak_ptr<Model<M>> mObj, double M::*mPtr) {
+  void Bind(weak_ptr<Model<M>> mObj, double M::*mPtr) {
     m_wpChecker = mObj;
     auto spMObj = mObj.lock();
     if (spMObj) {
       m_modelPtr = &(spMObj->get_ref().*mPtr);
-      return true;
+    } else {
+      throw runtime_error("Can not bind to an object which is destroied.");
     }
-    return false;
   }
 
   template<typename M>
-  bool Bind(weak_ptr<Model<M>> mObj) {
+  void Bind(weak_ptr<Model<M>> mObj) {
     m_wpChecker = mObj;
     auto spMObj = mObj.lock();
     if (spMObj) {
       m_modelPtr = &(spMObj->get_ref());
-      return true;
+    } else {
+      throw runtime_error("Can not bind to an object which is destroied.");
     }
-    return false;
   }
 
   void UnBind() {
@@ -88,6 +82,7 @@ public:
 
   ModelAccessor<T> GetAccessor() {
     auto sp = m_wpChecker.lock();
+    if (!sp) UnBind();
     return ModelAccessor<T>{m_modelPtr, sp};
   }
 

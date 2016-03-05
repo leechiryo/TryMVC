@@ -20,6 +20,13 @@ struct C{
   int b;
   char c;
   double d;
+  ~C() {
+
+    stringstream ss;
+    ss << "C object is deleted. [" << this << "]"<< endl;
+
+    MessageBoxA(0, ss.str().c_str(), "test", 0);
+  }
 };
 
 bool operator==(const C &x, const C &y) {
@@ -35,6 +42,49 @@ bool objsptr(T * obj, void *ptr){
   char * objaddr = reinterpret_cast<char*>(obj);
   char * ptraddr = reinterpret_cast<char*>(ptr);
   return (ptraddr > objaddr) && ((ptraddr - objaddr) < sizeof(T));
+}
+
+// test the model delete.
+void test_delete() {
+  auto &model = mvc::m<C>("delete");
+  App::RemoveModel("delete");  // -- delete the model here.
+}
+
+void stubfunc(shared_ptr<Model<C>> ptr) {
+  
+}
+
+// test the model delete.
+void test_delete2() {
+  auto &model = mvc::m<C>("delete2");
+  stubfunc(App::GetModel<C>("delete2"));
+
+  ModelRef<double> refd{ 0.0 }; // define a new model ref
+  refd.Bind<C>(App::GetModel<C>("delete2"), &C::d);
+
+  auto &accd = refd.GetAccessor(); // accd to d
+
+  accd = 2.0;
+
+  App::RemoveModel("delete2");
+
+  accd = 5.0;
+} // -- delete the model here.
+
+// test the model delete.
+void test_delete3() {
+  auto &model = mvc::m<C>("delete3");
+  stubfunc(App::GetModel<C>("delete3"));
+
+  ModelRef<double> refd{ 0.0 }; // define a new model ref
+  refd.Bind<C>(App::GetModel<C>("delete3"), &C::d);
+
+  refd.GetAccessor() = 2.0;
+
+  App::RemoveModel("delete3"); // -- model deleted here.
+
+  refd.GetAccessor() = 5.0;  // will change a value of inner fallback.
+                             // model won't be changed which is already destoried.
 }
 
 // このコード モジュールに含まれる関数の宣言を転送します:
@@ -62,6 +112,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
   ModelRef<C> cref;
   cref.Bind<C>(spm9);
   cref.GetAccessor()->a = 10;
+
+  //test delete
+  test_delete();
+
+  test_delete2();
+
+  test_delete3();
+
 
   // TODO: ここにコードを挿入してください。
   Model<string> b("this");
