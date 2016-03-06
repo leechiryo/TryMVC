@@ -23,7 +23,7 @@ public:
     return *this;
   }
 
-  operator bool() const {
+  bool isValid() const {
     if (m_spModel) return true;
     else return false;
   }
@@ -33,7 +33,7 @@ public:
     else return nullptr;
   }
 
-  operator T() {
+  operator T() const {
     return *m_fieldPtr;
   }
 

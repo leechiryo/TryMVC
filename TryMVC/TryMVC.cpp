@@ -56,18 +56,18 @@ void stubfunc(ModelAccessor<C> ptr) {
 
 // test the model delete.
 void test_delete2() {
-  mvc::m<C>("delete2");                // create a new model.
-  stubfunc(App::GetModel<C>("delete2"));             // get a shared pointer of the model.
+  mvc::m<C>("delete2");                   // create a new model.
+  stubfunc(App::GetModel<C>("delete2"));  // get a shared pointer of the model.
 
-  ModelRef<double> refd{ 0.0 };                      // define a new model ref
-  refd.Bind<C>("delete2", &C::d);  // bind the ref to the new model.
-  auto &accd = refd.Access();                        // get accessor to the new model from the model ref.
+  ModelRef<double> refd{ 0.0 };           // define a new model ref
+  refd.Bind<C>("delete2", &C::d);         // bind the ref to the new model.
+  auto &accd = refd.Access();             // get accessor to the new model from the model ref.
 
-  accd = 2.0;                                        // access the model from the accessor.
+  accd = 2.0;                             // access the model from the accessor.
 
-  App::RemoveModel("delete2");                       // release the shared pointer.
+  App::RemoveModel("delete2");            // release the shared pointer.
 
-  accd = 5.0;                                        // access the model from the accessor.
+  accd = 5.0;                             // access the model from the accessor.
 } // ** model deleted here.
 
 // test the model delete.
@@ -94,6 +94,8 @@ void do_test() {
   r1.Bind<C>("me", &C::d);     // bind the model reference to "a field of a model".
   auto m9ac = r1.Access();     // get the access to binding field.
   m9ac = 1.2;                  // set the binding field value.
+
+  double dval = m9ac;
 
   ModelRef<C> cref;            // create a model reference.
   cref.Bind("me");             // bind the model reference to "model itself".
@@ -137,7 +139,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
   UNREFERENCED_PARAMETER(lpCmdLine);
 
   // do some test about the model and view.
-  // do_test();
+  do_test();
 
 
   // グローバル文字列を初期化しています。

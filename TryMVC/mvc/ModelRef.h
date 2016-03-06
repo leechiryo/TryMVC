@@ -27,20 +27,20 @@ public:
 
   template<typename M>
   void Bind(string modelId, double M::*mPtr) {
-    auto spModel = App::GetModel<M>(modelId);
-    m_wpModel = spModel.get_spModel();
-    if (spModel) {
-      m_fieldPtr = &(spModel.operator->()->*mPtr);
+    auto accModel = App::GetModel<M>(modelId);
+    m_wpModel = accModel.get_spModel();
+    if (accModel.isValid()) {
+      m_fieldPtr = &(accModel.operator->()->*mPtr);
     } else {
       throw runtime_error("Can not bind to an object which is destroied.");
     }
   }
 
   void Bind(string modelId) {
-    auto spModel = App::GetModel<T>(modelId);
-    m_wpModel = spModel.get_spModel();
-    if (spModel) {
-      m_fieldPtr = spModel.operator->();
+    auto accModel = App::GetModel<T>(modelId);
+    m_wpModel = accModel.get_spModel();
+    if (accModel.isValid()) {
+      m_fieldPtr = accModel.operator->();
     } else {
       throw runtime_error("Can not bind to an object which is destroied.");
     }
