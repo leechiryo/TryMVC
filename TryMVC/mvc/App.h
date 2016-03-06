@@ -51,7 +51,7 @@ public:
 
     // save the weak pointer of T to the object itself.
     Model<T> *pm = ptr.get();
-    pm->_wpThis = ptr;
+    pm->m_wpThis = ptr;
 
     return ptr->get_accessor();
   }

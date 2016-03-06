@@ -51,33 +51,33 @@ class Model : public ModelBase {
   friend class ModelRef<T>;
 
 private:
-  T _modelCopy;
-  T _model;
-  weak_ptr<Model<T>> _wpThis;
+  T m_modelCopy;
+  T m_model;
+  weak_ptr<Model<T>> m_wpThis;
 
   ModelAccessor<T> get_accessor() {
-    auto spThis = _wpThis.lock();
+    auto spThis = m_wpThis.lock();
     if (spThis) {
-      return ModelAccessor<T>{&_model, spThis};
+      return ModelAccessor<T>{&m_model, spThis};
     } else {
       throw runtime_error("The model has been deleted.");
     }
   }
 
   T* get_ptr() {
-    return &_model;
+    return &m_model;
   }
 
 public:
   template<typename... Args>
-  Model(Args... args) : _model(args...) {
-    _modelCopy = _model;
+  Model(Args... args) : m_model(args...) {
+    m_modelCopy = m_model;
   }
 
   bool ModelChanged() {
-    bool changed = (_modelCopy != _model);
+    bool changed = (m_modelCopy != m_model);
     if (changed) {
-      _modelCopy = _model;
+      m_modelCopy = m_model;
     }
     return changed;
   }

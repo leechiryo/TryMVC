@@ -137,7 +137,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
   UNREFERENCED_PARAMETER(lpCmdLine);
 
   // do some test about the model and view.
-  //do_test();
+  // do_test();
 
 
   // グローバル文字列を初期化しています。
