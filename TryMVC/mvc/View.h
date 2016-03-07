@@ -10,6 +10,9 @@
 
 using namespace std;
 
+//template<typename M>
+//class ModelRef;
+
 template<typename DerivedType>
 class View : public ViewBase {
   typedef void(*ControllerMethod)(shared_ptr<DerivedType>, int param);
@@ -17,7 +20,7 @@ class View : public ViewBase {
 
 private:
   map<int, ControllerMethod> m_eventHandlers;
-  weak_ptr<DerivedType> m_weakthis;
+  weak_ptr<DerivedType> m_wpThis;
 
 public:
 
@@ -36,7 +39,7 @@ public:
   void FireEvent(int msg){
     if (m_eventHandlers.find(msg) != m_eventHandlers.end()){
 
-      auto sharedthis = m_weakthis.lock();
+      auto sharedthis = m_wpThis.lock();
       if (sharedthis){
         m_eventHandlers[msg](sharedthis, msg);
       }
@@ -45,9 +48,27 @@ public:
     }
   }
 
+  //template<typename M>
+  //void Bind(const ModelRef<M> &mref, string modelId) {
+  //  mref.Bind(modelId);
+  //  auto spModel = mref.m_wpModel.lock();
+  //  if (spModel){
+  //    sp->AddBindedView(m_wpThis);
+  //  }
+  //}
+
+  //template<typename M, typename F>
+  //void Bind(const ModelRef<M> &mref, string modelId, F M::*pField) {
+  //  mref.Bind(modelId, pField);
+  //  auto spModel = mref.m_wpModel.lock();
+  //  if (spModel){
+  //    sp->AddBindedView(m_wpThis);
+  //  }
+  //}
+
   //template<typename FieldType>
   //void bind(weak_ptr<Model<FieldType>> &pfield, weak_ptr<Model<FieldType>> &model) {
   //  pfield = model;
-  //  model->AddBindedViews(m_weakthis);
+  //  model->AddBindedViews(m_wpThis);
   //}
 };

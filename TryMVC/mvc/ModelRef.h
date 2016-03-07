@@ -7,8 +7,13 @@
 
 using namespace std;
 
+class ViewBase;
+
 template<typename T>
 class ModelRef {
+
+  friend class ViewBase;
+
 private:
   T m_fallback;
   T *m_fieldPtr;
@@ -26,7 +31,7 @@ public:
   }
 
   template<typename M>
-  void Bind(string modelId, double M::*mPtr) {
+  void Bind(string modelId, T M::*mPtr) {
     auto accModel = App::GetModel<M>(modelId);
     m_wpModel = accModel.get_spModel();
     if (accModel.isValid()) {

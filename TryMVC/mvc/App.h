@@ -34,8 +34,7 @@ public:
     s_views.insert({ id, ptr });
 
     // save the weak pointer of T to the object itself.
-    View<T> *pvb = ptr.get();
-    pvb->m_weakthis = ptr;
+    ptr->m_wpThis = ptr;
 
     return ptr;
   }
@@ -50,8 +49,7 @@ public:
     s_models.insert({ id, ptr });
 
     // save the weak pointer of T to the object itself.
-    Model<T> *pm = ptr.get();
-    pm->m_wpThis = ptr;
+    ptr->m_wpThis = ptr;
 
     return ptr->get_accessor();
   }

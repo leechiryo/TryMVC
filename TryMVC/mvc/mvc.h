@@ -19,9 +19,8 @@ namespace mvc {
   }
 
   template<typename T>
-  T& getv(string id) {
-    auto sp = App::GetView<T>(id);
-    return (*sp);
+  shared_ptr<T> getv(string id) {
+    return App::GetView<T>(id);
   }
 
   template<typename T>

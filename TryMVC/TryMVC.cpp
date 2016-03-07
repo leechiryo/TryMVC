@@ -60,7 +60,7 @@ void test_delete2() {
   stubfunc(App::GetModel<C>("delete2"));  // get a shared pointer of the model.
 
   ModelRef<double> refd{ 0.0 };           // define a new model ref
-  refd.Bind<C>("delete2", &C::d);         // bind the ref to the new model.
+  refd.Bind("delete2", &C::d);         // bind the ref to the new model.
   auto &accd = refd.Access();             // get accessor to the new model from the model ref.
 
   accd = 2.0;                             // access the model from the accessor.
@@ -76,7 +76,7 @@ void test_delete3() {
   stubfunc(App::GetModel<C>("delete3"));
 
   ModelRef<double> refd{ 0.0 }; // define a new model ref
-  refd.Bind<C>("delete3", &C::d);
+  refd.Bind("delete3", &C::d);
 
   refd.Access() = 2.0;
 
@@ -89,11 +89,11 @@ void test_delete3() {
 void do_test() {
   // test model and modelref and modelaccessor
   auto m9 = mvc::m<C>("me");   // create new model.
-  m9->d = 2.4;                 // update the model value.
-  ModelRef<double> r1(0.0);    // create a model reference.
-  r1.Bind<C>("me", &C::d);     // bind the model reference to "a field of a model".
+  m9->c = 12;                 // update the model value.
+  ModelRef<char> r1(0);        // create a model reference.
+  r1.Bind("me", &C::c);        // bind the model reference to "a field of a model".
   auto m9ac = r1.Access();     // get the access to binding field.
-  m9ac = 1.2;                  // set the binding field value.
+  m9ac = 28;                  // set the binding field value.
 
   double dval = m9ac;
 
@@ -140,7 +140,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
   // do some test about the model and view.
   do_test();
-
 
   // グローバル文字列を初期化しています。
   LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
