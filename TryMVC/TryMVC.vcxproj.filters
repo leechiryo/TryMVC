@@ -54,7 +54,7 @@
     <ClInclude Include="mvc\ModelRef.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="mvc\ModelAccessor.h">
+    <ClInclude Include="mvc\ModelSafePtr.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

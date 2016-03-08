@@ -40,7 +40,7 @@ public:
   }
 
   template <typename T, typename ... Args>
-  static ModelAccessor<T> CreateModel(string id, Args ... args) {
+  static ModelSafePtr<T> CreateModel(string id, Args ... args) {
     if (s_models.find(id) != s_models.end()) {
       throw std::runtime_error("The id exists already." + id);
     }
@@ -67,7 +67,7 @@ public:
   }
 
   template <typename T>
-  static ModelAccessor<T> GetModel(string id) {
+  static ModelSafePtr<T> GetModel(string id) {
     if (s_models.find(id) == s_models.end()) {
       throw std::runtime_error("Can not find the model.");
     }

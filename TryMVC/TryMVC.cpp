@@ -23,7 +23,7 @@ struct C {
   ~C() {
 
     stringstream ss;
-    ss << "C object is deleted. [" << this << "]"<< endl;
+    ss << "C object is deleted. [" << this << "]" << endl;
 
     MessageBoxA(0, ss.str().c_str(), "test", 0);
   }
@@ -46,12 +46,12 @@ bool objsptr(T * obj, void *ptr) {
 
 // test the model delete.
 void test_delete() {
-  mvc::m<C>("delete");  // create a new model.
+  mvc::m<C>("delete");         // create a new model.
   App::RemoveModel("delete");  // ** model deleted here.
 }
 
-void stubfunc(ModelAccessor<C> ptr) {
-  
+void stubfunc(ModelSafePtr<C> ptr) {
+
 }
 
 // test the model delete.
@@ -60,14 +60,14 @@ void test_delete2() {
   stubfunc(App::GetModel<C>("delete2"));  // get a shared pointer of the model.
 
   ModelRef<double> refd{ 0.0 };           // define a new model ref
-  refd.Bind("delete2", &C::d);         // bind the ref to the new model.
-  auto &accd = refd.Access();             // get accessor to the new model from the model ref.
+  refd.Bind("delete2", &C::d);            // bind the ref to the new model.
+  auto spModel = refd.SafePtr();          // get accessor to the new model from the model ref.
 
-  accd = 2.0;                             // access the model from the accessor.
+  *spModel = 2.0;                         // access the model from the accessor.
 
   App::RemoveModel("delete2");            // release the shared pointer.
 
-  accd = 5.0;                             // access the model from the accessor.
+  *spModel = 5.0;                         // access the model from the accessor.
 } // ** model deleted here.
 
 // test the model delete.
@@ -75,31 +75,31 @@ void test_delete3() {
   mvc::m<C>("delete3");
   stubfunc(App::GetModel<C>("delete3"));
 
-  ModelRef<double> refd{ 0.0 }; // define a new model ref
+  ModelRef<double> refd{ 0.0 };           // define a new model ref
   refd.Bind("delete3", &C::d);
 
-  refd.Access() = 2.0;
+  *refd.SafePtr() = 2.0;
 
-  App::RemoveModel("delete3"); // ** model deleted here.
+  App::RemoveModel("delete3");            // ** model deleted here.
 
-  refd.Access() = 5.0;  // will change a value of inner fallback.
-                        // the destroied model won't be accessed.
+  *refd.SafePtr() = 5.0;                  // will change a value of inner fallback.
+  // the destroied model won't be accessed.
 }
 
 void do_test() {
-  // test model and modelref and modelaccessor
-  auto m9 = mvc::m<C>("me");   // create new model.
-  m9->c = 12;                 // update the model value.
-  ModelRef<char> r1(0);        // create a model reference.
-  r1.Bind("me", &C::c);        // bind the model reference to "a field of a model".
-  auto m9ac = r1.Access();     // get the access to binding field.
-  m9ac = 28;                  // set the binding field value.
+  // test model and modelref and ModelSafePtr
+  auto spModel = mvc::m<C>("me");   // create new model.
+  spModel->c = 12;                  // update the model value.
+  ModelRef<char> r1(0);             // create a model reference.
+  r1.Bind("me", &C::c);             // bind the model reference to "a field of a model".
+  auto spCinModel = r1.SafePtr();   // get safe pointer to binding field.
+  *spCinModel = 28;                 // set the binding field value.
 
-  double dval = m9ac;
+  double dval = *spCinModel;
 
   ModelRef<C> cref;            // create a model reference.
   cref.Bind("me");             // bind the model reference to "model itself".
-  cref.Access()->a = 10;       // access the model.
+  cref.SafePtr()->a = 10;      // access the model.
 
   //test delete
   test_delete();
@@ -107,21 +107,32 @@ void do_test() {
   test_delete3();
 
   // TODO: ここにコードを挿入してください。
-  auto m1 = mvc::m<string>("id", "value");  // create a new model.
-  MessageBoxA(0, m1->c_str(), "test", 0);     // the output should be "value".
+  auto spM1 = mvc::m<string>("id", "value");  // create a new model.
+  MessageBoxA(0, spM1->c_str(), "test", 0);   // the output should be "value".
 
-  m1 = "new value";                          // update the model value.
-  MessageBoxA(0, m1->c_str(), "test", 0);     // the output should be "new value".
+  *spM1 = "new value";                        // update the model value.
+  MessageBoxA(0, spM1->c_str(), "test", 0);   // the output should be "new value".
 
-  auto m2 = mvc::getm<string>("id");        // get the model from its id.
-  MessageBoxA(0, m2->c_str(), "test", 0);     // the output should be "new value".
+  auto spM2 = mvc::getm<string>("id");        // get the model from its id.
+  MessageBoxA(0, spM2->c_str(), "test", 0);   // the output should be "new value".
 
-  auto btn = mvc::v<Button>("btn1", "My Button"); // create a new view.
-  btn->title.Bind("id");                    // bind the view's field with a model.
-  MessageBoxA(0, btn->title.Access()->c_str(), "test", 0);  // the output should be "new value" (the model's value).
+  // create a new view, with btn1 as the id and the following parameter used to initialize the view.
+  auto btn = mvc::v<Button>("btn1", "My Button");
 
-  m2 = "button value";                                     // update the model.
-  MessageBoxA(0, btn->title.Access()->c_str(), "test", 0);  // the output of the view should be "button value" (updated with the model).
+  // output the text in the view.
+  MessageBoxA(0, btn->title.SafePtr()->c_str(), "test", 0);
+
+  // bind the view's field with a model.
+  btn->title.Bind("id");
+
+  // the output should be "new value" (the model's value).
+  MessageBoxA(0, btn->title.SafePtr()->c_str(), "test", 0);
+
+  // update the model.
+  *spM2 = "button value";
+
+  // the output of the view should be "button value" (updated with the model).
+  MessageBoxA(0, btn->title.SafePtr()->c_str(), "test", 0);
 }
 
 // このコード モジュールに含まれる関数の宣言を転送します:

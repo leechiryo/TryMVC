@@ -14,7 +14,7 @@ namespace mvc {
   }
 
   template<typename T, typename ... Args>
-  ModelAccessor<T> m(string id, Args ... args){
+  ModelSafePtr<T> m(string id, Args ... args){
     return App::CreateModel<T>(id, args...);
   }
 
@@ -24,7 +24,7 @@ namespace mvc {
   }
 
   template<typename T>
-  ModelAccessor<T> getm(string id) {
+  ModelSafePtr<T> getm(string id) {
     return App::GetModel<T>(id);
   }
 }

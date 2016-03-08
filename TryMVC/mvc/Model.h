@@ -9,7 +9,7 @@
 #include <memory>
 #include "WeakPtrComparer.h"
 #include "ViewBase.h"
-#include "ModelAccessor.h"
+#include "ModelSafePtr.h"
 
 template<typename T>
 class ModelRef;
@@ -55,10 +55,10 @@ private:
   T m_model;
   weak_ptr<Model<T>> m_wpThis;
 
-  ModelAccessor<T> get_accessor() {
+  ModelSafePtr<T> get_accessor() {
     auto spThis = m_wpThis.lock();
     if (spThis) {
-      return ModelAccessor<T>{&m_model, spThis};
+      return ModelSafePtr<T>{&m_model, spThis};
     } else {
       throw runtime_error("The model has been deleted.");
     }

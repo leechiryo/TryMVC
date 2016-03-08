@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include "ModelAccessor.h"
+#include "ModelSafePtr.h"
 #include "Model.h"
 #include "App.h"
 
@@ -22,7 +22,7 @@ private:
 public:
 
   template<typename ... Args>
-  ModelRef(Args ... args) : m_fallback(args...) {
+  ModelRef(Args ... args) : m_fallback(args...), m_wpModel() {
     m_fieldPtr = &m_fallback;
   }
 
@@ -35,7 +35,7 @@ public:
     auto accModel = App::GetModel<M>(modelId);
     m_wpModel = accModel.get_spModel();
     if (accModel.isValid()) {
-      m_fieldPtr = &(accModel.operator->()->*mPtr);
+      m_fieldPtr = &(accModel->*mPtr);
     } else {
       throw runtime_error("Can not bind to an object which is destroied.");
     }
@@ -45,7 +45,7 @@ public:
     auto accModel = App::GetModel<T>(modelId);
     m_wpModel = accModel.get_spModel();
     if (accModel.isValid()) {
-      m_fieldPtr = accModel.operator->();
+      m_fieldPtr = accModel;
     } else {
       throw runtime_error("Can not bind to an object which is destroied.");
     }
@@ -56,10 +56,10 @@ public:
     m_fieldPtr = &m_fallback;
   }
 
-  ModelAccessor<T> Access() {
+  ModelSafePtr<T> SafePtr() {
     auto sp = m_wpModel.lock();
     if (!sp) UnBind();
-    return ModelAccessor<T>{m_fieldPtr, sp};
+    return ModelSafePtr<T>{m_fieldPtr, sp};
   }
 
 };
