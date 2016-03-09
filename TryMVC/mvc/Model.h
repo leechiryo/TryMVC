@@ -55,7 +55,7 @@ private:
   T m_model;
   weak_ptr<Model<T>> m_wpThis;
 
-  ModelSafePtr<T> get_accessor() {
+  ModelSafePtr<T> get_safeptr() {
     auto spThis = m_wpThis.lock();
     if (spThis) {
       return ModelSafePtr<T>{&m_model, spThis};

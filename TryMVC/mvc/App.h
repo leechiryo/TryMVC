@@ -51,7 +51,7 @@ public:
     // save the weak pointer of T to the object itself.
     ptr->m_wpThis = ptr;
 
-    return ptr->get_accessor();
+    return ptr->get_safeptr();
   }
 
   static void RemoveView(string);
@@ -72,6 +72,6 @@ public:
       throw std::runtime_error("Can not find the model.");
     }
     auto ptrm = dynamic_pointer_cast<Model<T>, ModelBase>(s_models[id]);
-    return ptrm->get_accessor();
+    return ptrm->get_safeptr();
   }
 };

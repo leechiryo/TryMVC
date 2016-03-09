@@ -17,23 +17,24 @@ class ModelRef {
 private:
   T m_fallback;
   T *m_fieldPtr;
-  weak_ptr<ModelBase> m_wpModel;
+  weak_ptr<ModelBase> m_wpRefModel;
+  weak_ptr<ViewBase> m_wpMyView;
 
 public:
 
   template<typename ... Args>
-  ModelRef(Args ... args) : m_fallback(args...), m_wpModel() {
+  ModelRef(Args ... args) : m_fallback(args...), m_wpRefModel() {
     m_fieldPtr = &m_fallback;
   }
 
   ~ModelRef() {
-    m_wpModel.reset();
+    m_wpRefModel.reset();
   }
 
   template<typename M>
   void Bind(string modelId, T M::*mPtr) {
     auto accModel = App::GetModel<M>(modelId);
-    m_wpModel = accModel.get_spModel();
+    m_wpRefModel = accModel.get_spModel();
     if (accModel.isValid()) {
       m_fieldPtr = &(accModel->*mPtr);
     } else {
@@ -43,7 +44,7 @@ public:
 
   void Bind(string modelId) {
     auto accModel = App::GetModel<T>(modelId);
-    m_wpModel = accModel.get_spModel();
+    m_wpRefModel = accModel.get_spModel();
     if (accModel.isValid()) {
       m_fieldPtr = accModel;
     } else {
@@ -57,7 +58,7 @@ public:
   }
 
   ModelSafePtr<T> SafePtr() {
-    auto sp = m_wpModel.lock();
+    auto sp = m_wpRefModel.lock();
     if (!sp) UnBind();
     return ModelSafePtr<T>{m_fieldPtr, sp};
   }
