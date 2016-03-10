@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "WeakPtrComparer.h"
+#include "ModelRef.h"
 
 using namespace std;
 
@@ -12,6 +13,9 @@ class ViewBase {
 private:
  
   set<PtrView, WeakPtrComparer<ViewBase>> m_subViews;
+
+protected:
+  weak_ptr<ViewBase> m_wpThis;
 
 public:
 

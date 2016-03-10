@@ -20,7 +20,6 @@ class View : public ViewBase {
 
 private:
   map<int, ControllerMethod> m_eventHandlers;
-  weak_ptr<DerivedType> m_wpThis;
 
 public:
 

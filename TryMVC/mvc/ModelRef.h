@@ -2,12 +2,11 @@
 
 #include <memory>
 #include "ModelSafePtr.h"
-#include "Model.h"
-#include "App.h"
 
 using namespace std;
 
 class ViewBase;
+class ModelBase;
 
 template<typename T>
 class ModelRef {

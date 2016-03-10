@@ -36,7 +36,7 @@ public:
     for (auto v : m_linkedViews) {
       auto pv = v.lock();
       if (pv) {
-        v.lock()->Draw();
+        pv->Draw();
       }
       else if (v.expired()) {
         m_linkedViews.erase(v);
