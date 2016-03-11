@@ -25,7 +25,7 @@ public:
   }
 
   void AddEventHandler(int msg, ControllerMethod method) {
-    if (m_eventHandlers.find(msg) != m_eventHandlers.end()) {
+    if (m_eventHandlers.find(msg) == m_eventHandlers.end()) {
       m_eventHandlers.insert({ msg, method });
     }
   }

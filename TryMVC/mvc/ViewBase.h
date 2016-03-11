@@ -15,8 +15,9 @@ class ViewBase {
   friend class App;
 
 private:
- 
   set<PtrView, WeakPtrComparer<ViewBase>> m_subViews;
+
+protected:
   weak_ptr<ViewBase> m_wpThis;
 
 public:

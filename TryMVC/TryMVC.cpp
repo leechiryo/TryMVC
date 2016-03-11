@@ -8,6 +8,8 @@
 #include "mvc\mvc.h"
 #include "mvc\ModelRef.h"
 
+#include "MyController.h"
+
 #define MAX_LOADSTRING 100
 
 // グローバル変数:
@@ -125,6 +127,10 @@ void do_test() {
   // bind the view's field with a model.
   btn->title.Bind("id");
 
+  // register event handlers.
+  btn->AddEventHandler(1, MyController::DoSomething);
+  btn->AddEventHandler(2, MyController::DoSomething2);
+
   // the output should be "new value" (the model's value).
   MessageBoxA(0, btn->title.SafePtr()->c_str(), "test", 0);
 
@@ -133,6 +139,26 @@ void do_test() {
 
   // the output of the view should be "button value" (updated with the model).
   MessageBoxA(0, btn->title.SafePtr()->c_str(), "test", 0);
+
+  // Fire the event. will redraw the button.
+  btn->FireEvent(1);
+
+  // Fire the event again. this time will not redraw because the value of the model was not changed.
+  btn->FireEvent(1);
+
+
+
+  // Fire the event. will redraw the button.
+  btn->FireEvent(2);
+
+  // unbind the field from the model.
+  btn->title.UnBind();
+
+  // Fire the event again. this time will not redraw because the binding between 
+  // the view and model was not exist and then no model will be changed.
+  btn->FireEvent(1);
+  btn->FireEvent(2);
+
 }
 
 // このコード モジュールに含まれる関数の宣言を転送します:
