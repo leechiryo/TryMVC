@@ -17,13 +17,14 @@ private:
   T m_fallback;
   T *m_fieldPtr;
   weak_ptr<ModelBase> m_wpRefModel;
-  weak_ptr<ViewBase> m_wpMyView;
+  weak_ptr<ViewBase> *m_wpMyView;
 
 public:
 
   template<typename ... Args>
   ModelRef(Args ... args) : m_fallback(args...), m_wpRefModel() {
     m_fieldPtr = &m_fallback;
+    m_wpMyView = nullptr;
   }
 
   ~ModelRef() {
