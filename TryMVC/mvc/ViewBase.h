@@ -10,19 +10,14 @@ using namespace std;
 
 class ViewBase {
 
+  template<typename T>
+  friend class ModelRef;
+  friend class App;
+
 private:
  
   set<PtrView, WeakPtrComparer<ViewBase>> m_subViews;
-
-protected:
   weak_ptr<ViewBase> m_wpThis;
-
-  template<typename T, typename ... Args>
-  ModelRef<T> make_ref(Args ... args) {
-    ModelRef<T> ref(args...);
-    ref.m_wpMyView = &m_wpThis;
-    return ref;
-  }
 
 public:
 

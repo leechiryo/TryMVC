@@ -3,15 +3,10 @@
 #include <map>
 #include <string>
 #include <memory>
-#include "Model.h"
 #include "ViewBase.h"
 #include "App.h"
-#include "WeakPtrComparer.h"
 
 using namespace std;
-
-//template<typename M>
-//class ModelRef;
 
 template<typename DerivedType>
 class View : public ViewBase {

@@ -59,7 +59,7 @@ void test_delete2() {
   mvc::m<C>("delete2");                   // create a new model.
   stubfunc(App::GetModel<C>("delete2"));  // get a shared pointer of the model.
 
-  ModelRef<double> refd{ 0.0 };           // define a new model ref
+  ModelRef<double> refd{ nullptr, 0.0 };           // define a new model ref
   refd.Bind("delete2", &C::d);            // bind the ref to the new model.
   auto spModel = refd.SafePtr();          // get accessor to the new model from the model ref.
 
@@ -75,7 +75,7 @@ void test_delete3() {
   mvc::m<C>("delete3");
   stubfunc(App::GetModel<C>("delete3"));
 
-  ModelRef<double> refd{ 0.0 };           // define a new model ref
+  ModelRef<double> refd{ nullptr, 0.0 };           // define a new model ref
   refd.Bind("delete3", &C::d);
 
   *refd.SafePtr() = 2.0;
@@ -97,7 +97,7 @@ void do_test() {
 
   double dval = *spCinModel;
 
-  ModelRef<C> cref;            // create a model reference.
+  ModelRef<C> cref{ nullptr };            // create a model reference.
   cref.Bind("me");             // bind the model reference to "model itself".
   cref.SafePtr()->a = 10;      // access the model.
 

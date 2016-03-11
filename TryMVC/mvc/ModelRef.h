@@ -17,14 +17,14 @@ private:
   T m_fallback;
   T *m_fieldPtr;
   weak_ptr<ModelBase> m_wpRefModel;
-  weak_ptr<ViewBase> *m_wpMyView;
+  ViewBase *m_pMyView;
 
 public:
 
   template<typename ... Args>
-  ModelRef(Args ... args) : m_fallback(args...), m_wpRefModel() {
+  ModelRef(ViewBase * pView, Args ... args) : m_fallback(args...), m_wpRefModel() {
     m_fieldPtr = &m_fallback;
-    m_wpMyView = nullptr;
+    m_pMyView = pView;
   }
 
   ~ModelRef() {
@@ -33,20 +33,26 @@ public:
 
   template<typename M>
   void Bind(string modelId, T M::*mPtr) {
-    auto accModel = App::GetModel<M>(modelId);
-    m_wpRefModel = accModel.get_spModel();
-    if (accModel.isValid()) {
-      m_fieldPtr = &(accModel->*mPtr);
+    auto spModel = App::GetModel<M>(modelId);
+    m_wpRefModel = spModel.get_spModel();
+    if (spModel.isValid()) {
+      m_fieldPtr = &(spModel->*mPtr);
+      if (m_pMyView){
+        spModel.get_spModel()->AddBindedView(m_pMyView->m_wpThis);
+      }
     } else {
       throw runtime_error("Can not bind to an object which is destroied.");
     }
   }
 
   void Bind(string modelId) {
-    auto accModel = App::GetModel<T>(modelId);
-    m_wpRefModel = accModel.get_spModel();
-    if (accModel.isValid()) {
-      m_fieldPtr = accModel;
+    auto spModel = App::GetModel<T>(modelId);
+    m_wpRefModel = spModel.get_spModel();
+    if (spModel.isValid()) {
+      m_fieldPtr = spModel;
+      if (m_pMyView){
+        spModel.get_spModel()->RemoveBindedView(m_pMyView->m_wpThis);
+      }
     } else {
       throw runtime_error("Can not bind to an object which is destroied.");
     }
