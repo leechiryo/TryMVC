@@ -12,5 +12,6 @@ public:
   }
 
   void DrawSelf(){
+    MessageBoxA(0, "Button is drawed", "Test", 0);
   }
 };

@@ -32,37 +32,11 @@ public:
 
   void FireEvent(int msg){
     if (m_eventHandlers.find(msg) != m_eventHandlers.end()){
-
       auto sharedthis = m_wpThis.lock();
       if (sharedthis){
-        m_eventHandlers[msg](sharedthis, msg);
+        m_eventHandlers[msg]( dynamic_pointer_cast<DerivedType>(sharedthis), msg);
       }
-
       App::UpdateViews();
     }
   }
-
-  //template<typename M>
-  //void Bind(const ModelRef<M> &mref, string modelId) {
-  //  mref.Bind(modelId);
-  //  auto spModel = mref.m_wpModel.lock();
-  //  if (spModel){
-  //    sp->AddBindedView(m_wpThis);
-  //  }
-  //}
-
-  //template<typename M, typename F>
-  //void Bind(const ModelRef<M> &mref, string modelId, F M::*pField) {
-  //  mref.Bind(modelId, pField);
-  //  auto spModel = mref.m_wpModel.lock();
-  //  if (spModel){
-  //    sp->AddBindedView(m_wpThis);
-  //  }
-  //}
-
-  //template<typename FieldType>
-  //void bind(weak_ptr<Model<FieldType>> &pfield, weak_ptr<Model<FieldType>> &model) {
-  //  pfield = model;
-  //  model->AddBindedViews(m_wpThis);
-  //}
 };
