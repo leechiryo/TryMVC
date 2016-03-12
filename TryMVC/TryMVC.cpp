@@ -80,11 +80,11 @@ void test_delete3() {
   ModelRef<double> refd{ nullptr, 0.0 };           // define a new model ref
   refd.Bind("delete3", &C::d);
 
-  *refd.SafePtr() = 2.0;
+  refd = 2.0;
 
   App::RemoveModel("delete3");            // ** model deleted here.
 
-  *refd.SafePtr() = 5.0;                  // will change a value of inner fallback.
+  refd = 5.0;                  // will change a value of inner fallback.
   // the destroied model won't be accessed.
 }
 

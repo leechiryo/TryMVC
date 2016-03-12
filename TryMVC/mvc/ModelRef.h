@@ -37,10 +37,11 @@ public:
     m_wpModel = spModel.get_spModel();
     if (spModel.isValid()) {
       m_fieldPtr = &(spModel->*mPtr);
-      if (m_pMyView){
+      if (m_pMyView) {
         spModel.get_spModel()->AddBindedView(m_pMyView->m_wpThis);
       }
-    } else {
+    }
+    else {
       throw runtime_error("Can not bind to an object which is destroied.");
     }
   }
@@ -50,29 +51,38 @@ public:
     m_wpModel = spModel.get_spModel();
     if (spModel.isValid()) {
       m_fieldPtr = spModel;
-      if (m_pMyView){
+      if (m_pMyView) {
         spModel.get_spModel()->AddBindedView(m_pMyView->m_wpThis);
       }
-    } else {
+    }
+    else {
       throw runtime_error("Can not bind to an object which is destroied.");
     }
   }
 
   void UnBind() {
-    auto sp = m_wpModel.lock();
-
-    if (sp) {
-      sp->RemoveBindedView(m_pMyView->m_wpThis);
+    auto spModel = m_wpModel.lock();
+    if (spModel) {
+      spModel->RemoveBindedView(m_pMyView->m_wpThis);
     }
-
-    m_fallback = *m_fieldPtr;
     m_fieldPtr = &m_fallback;
   }
 
   ModelSafePtr<T> SafePtr() {
-    auto sp = m_wpModel.lock();
-    if (!sp) UnBind();
-    return ModelSafePtr<T>{m_fieldPtr, sp};
+    auto spModel = m_wpModel.lock();
+    if (!spModel) UnBind();
+    return ModelSafePtr<T>{m_fieldPtr, spModel};
+  }
+
+  ModelRef<T>& operator=(const T &m) {
+    auto spModel = m_wpModel.lock();
+    if (!spModel) UnBind();
+    *m_fieldPtr = m;
+    return *this;
+  }
+
+  ModelSafePtr<T> operator->() {
+    return SafePtr();
   }
 
 };
