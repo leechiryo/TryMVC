@@ -14,8 +14,11 @@ class ViewBase {
   friend class ModelRef;
   friend class App;
 
+protected:
+  typedef set<PtrView, WeakPtrComparer<ViewBase>> WPViewSet;
+
 private:
-  set<PtrView, WeakPtrComparer<ViewBase>> m_subViews;
+  WPViewSet m_subViews;
 
 protected:
   weak_ptr<ViewBase> m_wpThis;
@@ -25,7 +28,7 @@ public:
   ViewBase(){
   }
 
-  ViewBase(const set<PtrView, WeakPtrComparer<ViewBase>> & views) : m_subViews(views){
+  ViewBase(const WPViewSet & views) : m_subViews(views){
   }
 
   double left, top, width, height;

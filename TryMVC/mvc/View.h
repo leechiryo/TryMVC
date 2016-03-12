@@ -21,7 +21,7 @@ public:
   View() : ViewBase(){
   }
 
-  View(const list<PtrView> & views) : ViewBase(views){
+  View(const WPViewSet & views) : ViewBase(views){
   }
 
   void AddEventHandler(int msg, ControllerMethod method) {

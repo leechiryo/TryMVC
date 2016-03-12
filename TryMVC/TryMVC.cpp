@@ -5,6 +5,7 @@
 #include "TryMVC.h"
 
 #include "mvc\Button.h"
+#include "mvc\MainWindow.h"
 #include "mvc\mvc.h"
 #include "mvc\ModelRef.h"
 
@@ -158,7 +159,12 @@ void do_test() {
   // the view and model was not exist and then no model will be changed.
   btn->FireEvent(1);
   btn->FireEvent(2);
+}
 
+using namespace mvc;
+
+void do_test2() {
+  MainWindow win{ {v<Button>("btnOk", "OK"), v<Button>("btnCancel", "Cancel")} };
 }
 
 // このコード モジュールに含まれる関数の宣言を転送します:
