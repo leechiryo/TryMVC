@@ -8,6 +8,12 @@
 #include "mvc\MainWindow.h"
 #include "mvc\mvc.h"
 #include "mvc\ModelRef.h"
+#include "mvc\new_ViewBase.h"
+#include "mvc\new_ModelBase.h"
+#include "mvc\new_Model.h"
+#include "mvc\new_ModelSafePtr.h"
+#include "mvc\new_ModelRef.h"
+#include "mvc\new_Button.h"
 
 #include "MyController.h"
 
@@ -49,12 +55,12 @@ bool objsptr(T * obj, void *ptr) {
 
 // test the model delete.
 void test_delete() {
-  mvc::m<C>("delete");         // create a new model.
-  App::RemoveModel("delete");  // ** model deleted here.
+  auto a = new mvc2::Model<C>("delete");         // create a new model.
+  mvc2::ModelBase::Remove("delete");  // ** model deleted here.
+  //delete a;
 }
 
-void stubfunc(ModelSafePtr<C> ptr) {
-
+void stubfunc(ModelSafePtr<C> ptr) { 
 }
 
 // test the model delete.
@@ -161,10 +167,21 @@ void do_test() {
   btn->FireEvent(2);
 }
 
-using namespace mvc;
+//using namespace mvc;
 
 void do_test2() {
-  MainWindow win{ {v<Button>("btnOk", "OK"), v<Button>("btnCancel", "Cancel")} };
+  string name = "agbc";
+  mvc2::ModelSafePtr<string>{&name, mvc2::SPModel{}};
+
+  mvc2::Button btn{ "btnOK", "OK" };
+
+  mvc2::Model<string> ttlModel{"title", "first value"};
+
+  btn.title.Bind("title");
+
+  mvc2::Button btn2{ "btnOK2", "OK" };
+  mvc2::Model<C> ttlModel2{"ttl2"};
+  btn.ch.Bind<C>("ttl2", &C::c);
 }
 
 // このコード モジュールに含まれる関数の宣言を転送します:

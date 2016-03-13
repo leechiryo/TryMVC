@@ -156,6 +156,14 @@
     <ClInclude Include="mvc\ModelSafePtr.h" />
     <ClInclude Include="mvc\ModelRef.h" />
     <ClInclude Include="mvc\mvc.h" />
+    <ClInclude Include="mvc\new_Button.h" />
+    <ClInclude Include="mvc\new_Model.h" />
+    <ClInclude Include="mvc\new_ModelBase.h" />
+    <ClInclude Include="mvc\new_ModelRef.h" />
+    <ClInclude Include="mvc\new_ModelSafePtr.h" />
+    <ClInclude Include="mvc\new_mvc.h" />
+    <ClInclude Include="mvc\new_View.h" />
+    <ClInclude Include="mvc\new_ViewBase.h" />
     <ClInclude Include="mvc\View.h" />
     <ClInclude Include="mvc\ViewBase.h" />
     <ClInclude Include="mvc\WeakPtrComparer.h" />
