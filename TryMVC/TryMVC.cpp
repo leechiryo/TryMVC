@@ -55,7 +55,7 @@ bool objsptr(T * obj, void *ptr) {
 
 // test the model delete.
 void test_delete() {
-  auto a = new mvc2::Model<C>("delete");         // create a new model.
+  auto a = mvc2::m<C>("delete");         // create a new model.
   mvc2::ModelBase::Remove("delete");  // ** model deleted here.
   //delete a;
 }
@@ -175,12 +175,12 @@ void do_test2() {
 
   mvc2::Button btn{ "btnOK", "OK" };
 
-  mvc2::Model<string> ttlModel{"title", "first value"};
+  auto ttlModel = mvc2::m<string>("title", "first value");
 
   btn.title.Bind("title");
 
   mvc2::Button btn2{ "btnOK2", "OK" };
-  mvc2::Model<C> ttlModel2{"ttl2"};
+  auto ttlModel2 = mvc2::m<C>("ttl2");
   btn.ch.Bind<C>("ttl2", &C::c);
 }
 

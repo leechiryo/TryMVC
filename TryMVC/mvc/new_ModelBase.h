@@ -10,6 +10,17 @@ namespace mvc2 {
     static map<string, SPModel> s_models;
     WPViewSet m_linkedViews;
 
+  protected:
+
+    ModelBase(string id) {
+
+      if (s_models.find(id) != s_models.end()) {
+        throw std::runtime_error("The id exists already." + id);
+      }
+
+      s_models.insert({ id, SPModel{this} });
+    }
+
   public:
     template<typename T>
     static shared_ptr<Model<T>> Find(string id) {
@@ -44,14 +55,6 @@ namespace mvc2 {
       }
     }
 
-    ModelBase(string id) {
-
-      if (s_models.find(id) != s_models.end()) {
-        throw std::runtime_error("The id exists already." + id);
-      }
-
-      s_models.insert({ id, SPModel{this} });
-    }
 
     virtual ~ModelBase() { }
 
