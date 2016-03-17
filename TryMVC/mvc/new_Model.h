@@ -6,7 +6,7 @@
 namespace mvc2 {
 
   template<typename T, typename... Args>
-  shared_ptr<T> m(Args... args);
+  ModelSafePtr<T> m(Args... args);
 
   template <typename T>
   class Model : public ModelBase {
@@ -14,8 +14,8 @@ namespace mvc2 {
     template<typename M>
     friend class ModelRef;
 
-    template<typename... Args>
-    friend shared_ptr<T> m<T>(Args... args);
+    template<typename T, typename... Args>
+    friend ModelSafePtr<T> m<>(Args... args);
 
 
   private:
@@ -31,7 +31,7 @@ namespace mvc2 {
     template<typename... Args>
     Model(string id, Args... args) : ModelBase(id), m_model(args...) {
       m_modelCopy = m_model;
-      m_wpThis = Find(id);
+      m_wpThis = Find<T>(id);
     }
 
   public:
@@ -45,8 +45,15 @@ namespace mvc2 {
   };
 
   template<typename T, typename... Args>
-  shared_ptr<T> m(Args... args){
+  ModelSafePtr<T> m(Args... args){
     auto pm = new Model<T>(args...);
-    return pm->m_wpThis.lock();
+    auto sp = pm->m_wpThis.lock();
+    if (sp){
+      return ModelSafePtr<T>{&pm->m_model, sp};
+    }
+    else{
+      throw runtime_error("The model has been deleted.");
+    }
+
   }
 }

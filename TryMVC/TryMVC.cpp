@@ -55,7 +55,7 @@ bool objsptr(T * obj, void *ptr) {
 
 // test the model delete.
 void test_delete() {
-  auto a = mvc2::m<C>("delete");         // create a new model.
+  mvc2::m<C>("delete");         // create a new model.
   mvc2::ModelBase::Remove("delete");  // ** model deleted here.
   //delete a;
 }
