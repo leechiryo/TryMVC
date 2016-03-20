@@ -14,17 +14,17 @@
  * 解决了用{}-list调用v/m函数的问题。
  */
 template<typename T>
-class VMObjCreator {
+class ConstructorProxy {
 private:
   std::shared_ptr<T> m_spT;
 
 public:
   template<typename... Args>
-  VMObjCreator(Args... args) {
+  ConstructorProxy(Args... args) {
     m_spT = make_shared<T>(args...);
   }
 
-  std::shared_ptr<T> GetSP() {
+  std::shared_ptr<T> GetSP() const {
     return m_spT;
   }
 };

@@ -8,14 +8,14 @@
 namespace mvc {
   using namespace std;
 
-  template<typename T, typename ... Args>
-  shared_ptr<T> v(string id, Args ... args){
-    return App::CreateView<T>(id, args...);
+  template<typename T>
+  shared_ptr<T> v(string id, const ConstructorProxy<T> &cp){
+    return App::CreateView<T>(id, cp);
   }
 
-  template<typename T, typename ... Args>
-  ModelSafePtr<T> m(string id, Args ... args){
-    return App::CreateModel<T>(id, args...);
+  template<typename T>
+  ModelSafePtr<T> m(string id, const ConstructorProxy<Model<T>> &cp){
+    return App::CreateModel<T>(id, cp);
   }
 
   template<typename T>

@@ -14,6 +14,7 @@
 #include "mvc\new_ModelSafePtr.h"
 #include "mvc\new_ModelRef.h"
 #include "mvc\new_Button.h"
+#include "mvc\ConstructorProxy.h"
 
 #include "MyController.h"
 
@@ -65,7 +66,7 @@ void stubfunc(ModelSafePtr<C> ptr) {
 
 // test the model delete.
 void test_delete2() {
-  mvc::m<C>("delete2");                   // create a new model.
+  mvc::m<C>("delete2", {});                   // create a new model.
   stubfunc(App::GetModel<C>("delete2"));  // get a shared pointer of the model.
 
   ModelRef<double> refd{ nullptr, 0.0 };           // define a new model ref
@@ -81,7 +82,7 @@ void test_delete2() {
 
 // test the model delete.
 void test_delete3() {
-  mvc::m<C>("delete3");
+  mvc::m<C>("delete3", {});
   stubfunc(App::GetModel<C>("delete3"));
 
   ModelRef<double> refd{ nullptr, 0.0 };           // define a new model ref
@@ -97,7 +98,7 @@ void test_delete3() {
 
 void do_test() {
   // test model and modelref and ModelSafePtr
-  auto spModel = mvc::m<C>("me");   // create new model.
+  auto spModel = mvc::m<C>("me", {});   // create new model.
   spModel->c = 12;                  // update the model value.
   ModelRef<char> r1(0);             // create a model reference.
   r1.Bind("me", &C::c);             // bind the model reference to "a field of a model".

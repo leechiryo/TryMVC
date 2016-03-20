@@ -6,6 +6,7 @@
 #include <memory>
 #include "ViewBase.h"
 #include "Model.h"
+#include "ConstructorProxy.h"
 
 using namespace std;
 class App {
@@ -24,13 +25,13 @@ public:
   static void Start();
   static void UpdateViews();
 
-  template <typename T, typename ... Args>
-  static shared_ptr<T> CreateView(string id, Args ... args) {
+  template <typename T>
+  static shared_ptr<T> CreateView(string id, const ConstructorProxy<T> &cp) {
     if (s_views.find(id) != s_views.end()) {
       throw std::runtime_error("The id exists already." + id);
     }
 
-    shared_ptr<T> ptr = make_shared<T>(args...);
+    shared_ptr<T> ptr = cp.GetSP();
     s_views.insert({ id, ptr });
 
     // save the weak pointer of T to the object itself.
@@ -39,13 +40,13 @@ public:
     return ptr;
   }
 
-  template <typename T, typename ... Args>
-  static ModelSafePtr<T> CreateModel(string id, Args ... args) {
+  template <typename T>
+  static ModelSafePtr<T> CreateModel(string id, const ConstructorProxy<Model<T>> &cp) {
     if (s_models.find(id) != s_models.end()) {
       throw std::runtime_error("The id exists already." + id);
     }
 
-    auto ptr = make_shared<Model<T>>(args...);
+    shared_ptr<Model<T>> ptr = cp.GetSP();
     s_models.insert({ id, ptr });
 
     // save the weak pointer of T to the object itself.
