@@ -8,12 +8,6 @@
 #include "mvc\MainWindow.h"
 #include "mvc\mvc.h"
 #include "mvc\ModelRef.h"
-#include "mvc\new_ViewBase.h"
-#include "mvc\new_ModelBase.h"
-#include "mvc\new_Model.h"
-#include "mvc\new_ModelSafePtr.h"
-#include "mvc\new_ModelRef.h"
-#include "mvc\new_Button.h"
 #include "mvc\ConstructorProxy.h"
 
 #include "MyController.h"
