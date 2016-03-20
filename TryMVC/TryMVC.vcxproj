@@ -166,6 +166,7 @@
     <ClInclude Include="mvc\new_ViewBase.h" />
     <ClInclude Include="mvc\View.h" />
     <ClInclude Include="mvc\ViewBase.h" />
+    <ClInclude Include="mvc\VMObjCreator.h" />
     <ClInclude Include="mvc\WeakPtrComparer.h" />
     <ClInclude Include="MyController.h" />
     <ClInclude Include="Resource.h" />
