@@ -12,13 +12,10 @@ using namespace std;
 
 namespace mvc {
   class App {
-  public:
-    typedef shared_ptr<ViewBase> PtrView;
-    typedef shared_ptr<ModelBase> PtrModel;
 
   private:
-    static map<string, PtrView> s_views;
-    static map<string, PtrModel> s_models;
+    static map<string, SPView> s_views;
+    static map<string, SPModel> s_models;
 
   public:
 

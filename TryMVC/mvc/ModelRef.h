@@ -1,6 +1,6 @@
 #pragma once
 
-#include <memory>
+#include "Types.h"
 #include "ModelSafePtr.h"
 
 using namespace std;
@@ -14,7 +14,7 @@ namespace mvc {
   private:
     T m_fallback;
     T *m_fieldPtr;
-    weak_ptr<ModelBase> m_wpModel;
+    WPModel m_wpModel;
     ViewBase *m_pMyView;
 
   public:

@@ -3,8 +3,8 @@
 #include "View.h"
 
 namespace mvc {
-  map<string, App::PtrView> App::s_views;
-  map<string, App::PtrModel> App::s_models;
+  map<string, SPView> App::s_views;
+  map<string, SPModel> App::s_models;
 
   void App::Start()
   {

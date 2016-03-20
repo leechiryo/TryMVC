@@ -1,6 +1,6 @@
 #pragma once
 
-#include <memory>
+#include "Types.h"
 
 using namespace std;
 
@@ -9,7 +9,7 @@ namespace mvc {
   class ModelSafePtr {
   private:
     T *m_fieldPtr;
-    shared_ptr<ModelBase> m_spModel;  // a shared pointer which to ensure the model will not be destroied while access to it.
+    SPModel m_spModel;  // a shared pointer which to ensure the model will not be destroied while access to it.
 
   public:
     ModelSafePtr(T *p, const shared_ptr<ModelBase> &pm) {

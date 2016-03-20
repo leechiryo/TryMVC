@@ -5,10 +5,7 @@
  * 发现了值发生了变化，该方法将返回True。
 */
 
-#include <list>
-#include <memory>
 #include "Types.h"
-#include "ViewBase.h"
 #include "ModelSafePtr.h"
 
 namespace mvc {
