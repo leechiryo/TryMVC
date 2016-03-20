@@ -56,9 +56,8 @@ bool objsptr(T * obj, void *ptr) {
 
 // test the model delete.
 void test_delete() {
-  mvc2::m<C>("delete");         // create a new model.
-  mvc2::ModelBase::Remove("delete");  // ** model deleted here.
-  //delete a;
+  mvc::m<C>("delete", {});     // create a new model.
+  App::RemoveModel("delete");  // ** model deleted here.
 }
 
 void stubfunc(ModelSafePtr<C> ptr) { 
@@ -168,22 +167,6 @@ void do_test() {
   btn->FireEvent(2);
 }
 
-//using namespace mvc;
-
-void do_test2() {
-  string name = "agbc";
-  mvc2::ModelSafePtr<string>{&name, mvc2::SPModel{}};
-
-  mvc2::Button btn{ "btnOK", "OK" };
-
-  auto ttlModel = mvc2::m<string>("title", "first value");
-
-  btn.title.Bind("title");
-
-  mvc2::Button btn2{ "btnOK2", "OK" };
-  auto ttlModel2 = mvc2::m<C>("ttl2");
-  btn.ch.Bind<C>("ttl2", &C::c);
-}
 
 // このコード モジュールに含まれる関数の宣言を転送します:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
