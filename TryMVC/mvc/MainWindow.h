@@ -4,13 +4,15 @@
 
 #include <vector>
 
-class MainWindow : public View<MainWindow>
-{
-public:
-  MainWindow(){}
-  MainWindow(const vector<PtrView> & subViews) { }
+namespace mvc {
+  class MainWindow : public View<MainWindow>
+  {
+  public:
+    MainWindow() {}
+    MainWindow(const WPViewSet & subViews) : View(subViews) { }
 
-  void DrawSelf(){
-    MessageBoxA(0, "MainWindow is drawed", "Test", 0);
-  }
-};
+    void DrawSelf() {
+      MessageBoxA(0, "MainWindow is drawed", "Test", 0);
+    }
+  };
+}

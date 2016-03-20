@@ -13,18 +13,21 @@
  * 在v函数和m函数的内部，我们又可以将View/Model对象连同id注册给全局的map。
  * 解决了用{}-list调用v/m函数的问题。
  */
-template<typename T>
-class ConstructorProxy {
-private:
-  std::shared_ptr<T> m_spT;
 
-public:
-  template<typename... Args>
-  ConstructorProxy(Args... args) {
-    m_spT = make_shared<T>(args...);
-  }
+namespace mvc {
+  template<typename T>
+  class ConstructorProxy {
+  private:
+    std::shared_ptr<T> m_spT;
 
-  std::shared_ptr<T> GetSP() const {
-    return m_spT;
-  }
-};
+  public:
+    template<typename... Args>
+    ConstructorProxy(Args... args) {
+      m_spT = make_shared<T>(args...);
+    }
+
+    std::shared_ptr<T> GetSP() const {
+      return m_spT;
+    }
+  };
+}

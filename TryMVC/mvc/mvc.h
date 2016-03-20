@@ -5,16 +5,17 @@
 #include <memory>
 #include "App.h"
 
+using namespace std;
+
 namespace mvc {
-  using namespace std;
 
   template<typename T>
-  shared_ptr<T> v(string id, const ConstructorProxy<T> &cp){
+  shared_ptr<T> v(string id, const ConstructorProxy<T> &cp) {
     return App::CreateView<T>(id, cp);
   }
 
   template<typename T>
-  ModelSafePtr<T> m(string id, const ConstructorProxy<Model<T>> &cp){
+  ModelSafePtr<T> m(string id, const ConstructorProxy<Model<T>> &cp) {
     return App::CreateModel<T>(id, cp);
   }
 

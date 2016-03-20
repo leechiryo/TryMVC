@@ -3,6 +3,8 @@
 #include "mvc/App.h"
 #include "mvc/Button.h"
 
+using namespace mvc;
+
 class MyController {
 
 public:
