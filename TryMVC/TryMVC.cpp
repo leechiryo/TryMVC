@@ -52,7 +52,7 @@ bool objsptr(T * obj, void *ptr) {
 
 // test the model delete.
 void test_delete() {
-  mvc::m<C>("delete", {});     // create a new model.
+  m<C>("delete", {});     // create a new model.
   App::RemoveModel("delete");  // ** model deleted here.
 }
 
@@ -61,10 +61,10 @@ void stubfunc(ModelSafePtr<C> ptr) {
 
 // test the model delete.
 void test_delete2() {
-  mvc::m<C>("delete2", {});                   // create a new model.
+  m<C>("delete2", {});                    // create a new model.
   stubfunc(App::GetModel<C>("delete2"));  // get a shared pointer of the model.
 
-  ModelRef<double> refd{ nullptr, 0.0 };           // define a new model ref
+  ModelRef<double> refd{ nullptr, 0.0 };  // define a new model ref
   refd.Bind("delete2", &C::d);            // bind the ref to the new model.
   auto spModel = refd.SafePtr();          // get accessor to the new model from the model ref.
 
@@ -77,10 +77,10 @@ void test_delete2() {
 
 // test the model delete.
 void test_delete3() {
-  mvc::m<C>("delete3", {});
+  m<C>("delete3", {});
   stubfunc(App::GetModel<C>("delete3"));
 
-  ModelRef<double> refd{ nullptr, 0.0 };           // define a new model ref
+  ModelRef<double> refd{ nullptr, 0.0 };  // define a new model ref
   refd.Bind("delete3", &C::d);
 
   refd = 2.0;
@@ -93,7 +93,7 @@ void test_delete3() {
 
 void do_test() {
   // test model and modelref and ModelSafePtr
-  auto spModel = mvc::m<C>("me", {});   // create new model.
+  auto spModel = m<C>("me", {});    // create new model.
   spModel->c = 12;                  // update the model value.
   ModelRef<char> r1(0);             // create a model reference.
   r1.Bind("me", &C::c);             // bind the model reference to "a field of a model".
@@ -102,7 +102,7 @@ void do_test() {
 
   double dval = *spCinModel;
 
-  ModelRef<C> cref{ nullptr };            // create a model reference.
+  ModelRef<C> cref{ nullptr }; // create a model reference.
   cref.Bind("me");             // bind the model reference to "model itself".
   cref.SafePtr()->a = 10;      // access the model.
 
@@ -112,17 +112,17 @@ void do_test() {
   test_delete3();
 
   // TODO: ここにコードを挿入してください。
-  auto spM1 = mvc::m<string>("id", "value");  // create a new model.
+  auto spM1 = m<string>("id", { "value" });   // create a new model.
   MessageBoxA(0, spM1->c_str(), "test", 0);   // the output should be "value".
 
   *spM1 = "new value";                        // update the model value.
   MessageBoxA(0, spM1->c_str(), "test", 0);   // the output should be "new value".
 
-  auto spM2 = mvc::getm<string>("id");        // get the model from its id.
+  auto spM2 = getm<string>("id");             // get the model from its id.
   MessageBoxA(0, spM2->c_str(), "test", 0);   // the output should be "new value".
 
   // create a new view, with btn1 as the id and the following parameter used to initialize the view.
-  auto btn = mvc::v<Button>("btn1", "My Button");
+  auto btn = v<Button>("btn1", "My Button");
 
   // output the text in the view.
   MessageBoxA(0, btn->title.SafePtr()->c_str(), "test", 0);
@@ -148,8 +148,6 @@ void do_test() {
 
   // Fire the event again. this time will not redraw because the value of the model was not changed.
   btn->FireEvent(1);
-
-
 
   // Fire the event. will redraw the button.
   btn->FireEvent(2);
