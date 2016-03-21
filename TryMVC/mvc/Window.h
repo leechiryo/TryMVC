@@ -5,11 +5,11 @@
 #include <vector>
 
 namespace mvc {
-  class MainWindow : public View<MainWindow>
+  class Window : public View<Window>
   {
   public:
-    MainWindow() {}
-    MainWindow(const WPViewSet & subViews) : View(subViews) { }
+    Window() {}
+    Window(const WPViewSet & subViews) : View(subViews) { }
 
     void DrawSelf() {
       MessageBoxA(0, "MainWindow is drawed", "Test", 0);
