@@ -1,10 +1,12 @@
 #pragma once
 
+#include <d2d1.h>
+#include <dwrite.h>
 #include <map>
 #include <set>
 #include <string>
 #include <memory>
-#include "ViewBase.h"
+#include "Types.h"
 #include "Model.h"
 #include "ConstructorProxy.h"
 
@@ -17,12 +19,65 @@ namespace mvc {
     static map<string, SPView> s_views;
     static map<string, SPModel> s_models;
 
+    static ID2D1Factory* s_pDirect2dFactory;
+    static IDWriteFactory* s_pDWriteFactory;
+
   public:
+
+    static double DPI_SCALE_X;
+    static double DPI_SCALE_Y;
 
     static ViewBase* mainWnd;
 
-    static void Start();
-    static void UpdateViews();
+    static void Start()
+    {
+      HRESULT hr = CoInitialize(NULL);
+      if (!SUCCEEDED(hr)) {
+        throw std::system_error(EINTR, std::system_category(), "COM environment is not initialized successfully.");
+      }
+      // create the d2d factory.
+      hr = D2D1CreateFactory(
+        D2D1_FACTORY_TYPE_SINGLE_THREADED,
+        &s_pDirect2dFactory);
+
+      if (!SUCCEEDED(hr)) {
+        CoUninitialize();
+        throw std::system_error(EINTR, std::system_category(), "Direct2D is not initialized successfully.");
+      }
+
+      // create the dwrite factory.
+      hr = DWriteCreateFactory(
+        DWRITE_FACTORY_TYPE_SHARED,
+        __uuidof(IDWriteFactory),
+        reinterpret_cast<IUnknown**>(&s_pDWriteFactory));
+
+      if (!SUCCEEDED(hr)) {
+        SafeRelease(s_pDirect2dFactory);
+        CoUninitialize();
+        throw std::system_error(EINTR, std::system_category(), "DirectWrite is not initialized successfully.");
+      }
+
+      float dpiX, dpiY;
+      s_pDirect2dFactory->GetDesktopDpi(&dpiX, &dpiY);
+
+      DPI_SCALE_X = dpiX / 96.0f;
+      DPI_SCALE_Y = dpiY / 96.0f;
+    }
+
+    static void End() {
+      SafeRelease(s_pDWriteFactory);
+      SafeRelease(s_pDirect2dFactory);
+      CoUninitialize();
+    }
+
+    static void UpdateViews()
+    {
+      for (auto m : s_models) {
+        if (m.second->ModelChanged()) {
+          m.second->UpdateBindedViews();
+        }
+      }
+    }
 
     template <typename T>
     static shared_ptr<T> CreateView(string id, const ConstructorProxy<T> &cp) {
@@ -54,8 +109,29 @@ namespace mvc {
       return ptr->get_safeptr();
     }
 
-    static void RemoveView(string);
-    static void RemoveModel(string);
+
+    static void RemoveView(string id)
+    {
+      auto it = s_views.find(id);
+      if (it != s_views.end()) {
+        if (it->second) {
+          it->second.reset();
+        }
+        s_views.erase(it);
+      }
+    }
+
+    static void RemoveModel(string id)
+    {
+      auto it = s_models.find(id);
+      if (it != s_models.end()) {
+        if (it->second) {
+          int cnt = it->second.use_count();
+          it->second.reset();
+        }
+        s_models.erase(it);
+      }
+    }
 
     template <typename T>
     static shared_ptr<T> GetView(string id) {

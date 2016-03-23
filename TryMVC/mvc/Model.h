@@ -6,6 +6,7 @@
 */
 
 #include "Types.h"
+#include "ViewBase.h"
 #include "ModelSafePtr.h"
 
 namespace mvc {
