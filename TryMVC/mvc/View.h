@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "ViewBase.h"
 #include "App.h"
@@ -13,6 +13,11 @@ namespace mvc {
 
   private:
     map<int, ControllerMethod> m_eventHandlers;
+
+  protected:
+    // 指向Window对象的D2DRenderTarget字段的指针。每个Window都有一个独立的D2DRenderTarget对象，
+    // 其内部的所有subview将共享这一对象，并利用该对象进行绘制。
+    ID2D1HwndRenderTarget** m_ppRenderTarget;
 
   public:
 

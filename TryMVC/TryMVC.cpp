@@ -1,6 +1,7 @@
 ﻿// TryMVC.cpp : アプリケーションのエントリ ポイントを定義します。
 //
 
+
 #include "stdafx.h"
 #include "TryMVC.h"
 
@@ -11,6 +12,9 @@
 #include "mvc\ConstructorProxy.h"
 
 #include "MyController.h"
+
+#pragma comment(lib, "d2d1.lib")
+#pragma comment(lib, "dwrite.lib")
 
 #define MAX_LOADSTRING 100
 
@@ -193,8 +197,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
   UNREFERENCED_PARAMETER(hPrevInstance);
   UNREFERENCED_PARAMETER(lpCmdLine);
 
+  App::Start();
   // do some test about the model and view.
   do_test2();
+  App::End();
 
   // グローバル文字列を初期化しています。
   LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
