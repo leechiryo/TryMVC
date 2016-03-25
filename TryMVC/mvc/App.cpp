@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "App.h"
 #include "View.h"
+#include "Model.h"
 
 namespace mvc {
   map<string, SPView> App::s_views;
@@ -11,4 +12,13 @@ namespace mvc {
 
   ID2D1Factory* App::s_pDirect2dFactory = nullptr;
   IDWriteFactory* App::s_pDWriteFactory = nullptr;
+
+  void App::UpdateViews()
+  {
+    for (auto m : s_models) {
+      if (m.second->ModelChanged()) {
+        m.second->UpdateBindedViews();
+      }
+    }
+  }
 }

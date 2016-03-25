@@ -205,11 +205,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
   UNREFERENCED_PARAMETER(hPrevInstance);
   UNREFERENCED_PARAMETER(lpCmdLine);
 
-  App::Start();
+  App::Initialize();
   // do some test about the model and view.
   // funcusec({10, 20, 'Z', 5.8 });
   do_test2();
-  App::End();
+  App::Uninitialize();
 
   // グローバル文字列を初期化しています。
   LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);

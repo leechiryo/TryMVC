@@ -7,7 +7,6 @@
 #include <string>
 #include <memory>
 #include "Types.h"
-#include "Model.h"
 #include "ConstructorProxy.h"
 
 using namespace std;
@@ -29,7 +28,7 @@ namespace mvc {
 
     static ViewBase* mainWnd;
 
-    static void Start()
+    static void Initialize()
     {
       HRESULT hr = CoInitialize(NULL);
       if (!SUCCEEDED(hr)) {
@@ -64,20 +63,13 @@ namespace mvc {
       DPI_SCALE_Y = dpiY / 96.0f;
     }
 
-    static void End() {
+    static void Uninitialize() {
       SafeRelease(s_pDWriteFactory);
       SafeRelease(s_pDirect2dFactory);
       CoUninitialize();
     }
 
-    static void UpdateViews()
-    {
-      for (auto m : s_models) {
-        if (m.second->ModelChanged()) {
-          m.second->UpdateBindedViews();
-        }
-      }
-    }
+    static void UpdateViews();
 
     template <typename T>
     static shared_ptr<T> CreateView(string id, const ConstructorProxy<T> &cp) {

@@ -1,31 +1,110 @@
-#pragma once
+﻿#pragma once
 
+#include <d2d1.h>
 #include "Types.h"
 #include "ModelRef.h"
+#include "App.h"
 
 using namespace std;
 
 namespace mvc {
+
   class ViewBase {
 
     template<typename T>
     friend class ModelRef;
     friend class App;
 
-  private:
-    WPViewSet m_subViews;
+    template<typename T>
+    friend class View;
+
 
   protected:
     weak_ptr<ViewBase> m_wpThis;
+    WPViewSet m_subViews;
+
+    double m_left;
+    double m_top;
+    double m_right;
+    double m_bottom;
+
+    bool m_mouseIn;
+
+    // 指向Window对象的D2DRenderTarget字段的指针。每个Window都有一个独立的D2DRenderTarget对象，
+    // 其内部的所有subview将共享这一对象，并利用该对象进行绘制。
+    ID2D1HwndRenderTarget* m_pRenderTarget;
+
     virtual void CreateD2DResource() = 0;
     virtual void DestroyD2DResource() = 0;
-    
-  public:
+    virtual char HandleMessage(UINT msg, WPARAM wParam, LPARAM lParam, LRESULT &result) = 0;
 
-    ViewBase() {
+    virtual void MouseEnter(double x, double y) {
     }
 
+    virtual void MouseLeft(double x, double y) {
+    }
+
+    void CreateD2DEnvironment() {
+      CreateD2DResource();
+
+      for (auto e : m_subViews) {
+        auto spv = e.lock();
+        if (spv) spv->CreateD2DEnvironment();
+      }
+    }
+
+    void DestroyD2DEnvironment() {
+      for (auto e : m_subViews) {
+        auto spv = e.lock();
+        if (spv)spv->DestroyD2DEnvironment();
+      }
+
+      DestroyD2DResource();
+    }
+
+    template <typename T>
+    double PixelsToDipsX(T x) {
+      return static_cast<double>(x) / App::DPI_SCALE_X;
+    }
+
+    template <typename T>
+    double PixelsToDipsY(T y) {
+      return static_cast<double>(y) / App::DPI_SCALE_Y;
+    }
+
+    int DipsXToPixels(double x){
+      return static_cast<int>(x * App::DPI_SCALE_X);
+    }
+
+    int DipsYToPixels(double y){
+      return static_cast<int>(y * App::DPI_SCALE_Y);
+    }
+
+    virtual bool HitTest(double dipX, double dipY) {
+      return dipX >= m_left && dipX <= m_right
+        && dipY >= m_top && dipY <= m_bottom;
+    }
+
+    bool HitTest(int pixelsX, int pixelsY) {
+      double dipX = PixelsToDipsX(pixelsX);
+      double dipY = PixelsToDipsY(pixelsY);
+
+      return HitTest(dipX, dipY);
+    }
+
+  public:
+
+    ViewBase() { }
+
+    virtual ~ViewBase(){ }
+
     ViewBase(const WPViewSet & views) : m_subViews(views) {
+      for (auto v : m_subViews){
+        auto spv = v.lock();
+        if (spv){
+          spv->m_pRenderTarget = m_pRenderTarget;
+        }
+      }
     }
 
     double left, top, width, height;

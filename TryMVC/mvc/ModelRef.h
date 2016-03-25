@@ -2,6 +2,7 @@
 
 #include "Types.h"
 #include "ModelSafePtr.h"
+#include "Model.h"
 
 using namespace std;
 
