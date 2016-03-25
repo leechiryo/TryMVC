@@ -2,7 +2,6 @@
 
 #include <d2d1.h>
 #include "Types.h"
-#include "ModelRef.h"
 #include "App.h"
 
 using namespace std;
