@@ -29,6 +29,7 @@ struct C {
   int b;
   char c;
   double d;
+ 
   ~C() {
 
     stringstream ss;
@@ -44,6 +45,13 @@ bool operator==(const C &x, const C &y) {
 
 bool operator!=(const C &x, const C &y) {
   return !(x == y);
+}
+
+void funcusec(const C& c){
+    stringstream ss;
+    ss << "C'c value is [" << c.c << "]" << endl;
+
+    MessageBoxA(0, ss.str().c_str(), "test", 0);
 }
 
 template<typename T>
@@ -199,7 +207,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
   UNREFERENCED_PARAMETER(lpCmdLine);
 
   // do some test about the model and view.
-  do_test();
+  // do_test();
+  funcusec({ 10, 20, 'Z', 5.8 });
 
   // グローバル文字列を初期化しています。
   LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
