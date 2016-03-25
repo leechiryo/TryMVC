@@ -19,10 +19,10 @@ namespace mvc {
     static map<string, SPView> s_views;
     static map<string, SPModel> s_models;
 
+  public:
+
     static ID2D1Factory* s_pDirect2dFactory;
     static IDWriteFactory* s_pDWriteFactory;
-
-  public:
 
     static double DPI_SCALE_X;
     static double DPI_SCALE_Y;

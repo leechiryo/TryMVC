@@ -17,7 +17,9 @@ namespace mvc {
 
   protected:
     weak_ptr<ViewBase> m_wpThis;
-
+    virtual void CreateD2DResource() = 0;
+    virtual void DestroyD2DResource() = 0;
+    
   public:
 
     ViewBase() {

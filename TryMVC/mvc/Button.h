@@ -6,6 +6,13 @@
 namespace mvc {
   class Button : public View<Button>
   {
+  protected:
+    virtual void CreateD2DResource() {
+
+    }
+    virtual void DestroyD2DResource() {
+
+    }
   public:
     ModelRef<string> title;
 
