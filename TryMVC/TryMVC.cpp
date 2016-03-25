@@ -1,28 +1,29 @@
-// TryMVC.cpp : ƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚ÌƒGƒ“ƒgƒŠ ƒ|ƒCƒ“ƒg‚ğ’è‹`‚µ‚Ü‚·B
+ï»¿// TryMVC.cpp : ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã®ã‚¨ãƒ³ãƒˆãƒª ãƒã‚¤ãƒ³ãƒˆã‚’å®šç¾©ã—ã¾ã™ã€‚
 //
+
 
 #include "stdafx.h"
 #include "TryMVC.h"
 
 #include "mvc\Button.h"
-#include "mvc\MainWindow.h"
+#include "mvc\Window.h"
 #include "mvc\mvc.h"
 #include "mvc\ModelRef.h"
-#include "mvc\new_ViewBase.h"
-#include "mvc\new_ModelBase.h"
-#include "mvc\new_Model.h"
-#include "mvc\new_ModelSafePtr.h"
-#include "mvc\new_ModelRef.h"
-#include "mvc\new_Button.h"
+#include "mvc\ConstructorProxy.h"
 
 #include "MyController.h"
 
+#pragma comment(lib, "d2d1.lib")
+#pragma comment(lib, "dwrite.lib")
+
 #define MAX_LOADSTRING 100
 
-// ƒOƒ[ƒoƒ‹•Ï”:
-HINSTANCE hInst;                                // Œ»İ‚ÌƒCƒ“ƒ^[ƒtƒFƒCƒX
-WCHAR szTitle[MAX_LOADSTRING];                  // ƒ^ƒCƒgƒ‹ ƒo[‚ÌƒeƒLƒXƒg
-WCHAR szWindowClass[MAX_LOADSTRING];            // ƒƒCƒ“ ƒEƒBƒ“ƒhƒE ƒNƒ‰ƒX–¼
+// ã‚°ãƒ­ãƒ¼ãƒãƒ«å¤‰æ•°:
+HINSTANCE hInst;                                // ç¾åœ¨ã®ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ã‚¤ã‚¹
+WCHAR szTitle[MAX_LOADSTRING];                  // ã‚¿ã‚¤ãƒˆãƒ« ãƒãƒ¼ã®ãƒ†ã‚­ã‚¹ãƒˆ
+WCHAR szWindowClass[MAX_LOADSTRING];            // ãƒ¡ã‚¤ãƒ³ ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ ã‚¯ãƒ©ã‚¹å
+
+using namespace mvc;
 
 struct C {
   int a;
@@ -63,9 +64,8 @@ bool objsptr(T * obj, void *ptr) {
 
 // test the model delete.
 void test_delete() {
-  mvc2::m<C>("delete");         // create a new model.
-  mvc2::ModelBase::Remove("delete");  // ** model deleted here.
-  //delete a;
+  m<C>("delete", {});     // create a new model.
+  App::RemoveModel("delete");  // ** model deleted here.
 }
 
 void stubfunc(ModelSafePtr<C> ptr) { 
@@ -73,10 +73,10 @@ void stubfunc(ModelSafePtr<C> ptr) {
 
 // test the model delete.
 void test_delete2() {
-  mvc::m<C>("delete2");                   // create a new model.
+  m<C>("delete2", {});                    // create a new model.
   stubfunc(App::GetModel<C>("delete2"));  // get a shared pointer of the model.
 
-  ModelRef<double> refd{ nullptr, 0.0 };           // define a new model ref
+  ModelRef<double> refd{ nullptr, 0.0 };  // define a new model ref
   refd.Bind("delete2", &C::d);            // bind the ref to the new model.
   auto spModel = refd.SafePtr();          // get accessor to the new model from the model ref.
 
@@ -89,10 +89,10 @@ void test_delete2() {
 
 // test the model delete.
 void test_delete3() {
-  mvc::m<C>("delete3");
+  m<C>("delete3", {});
   stubfunc(App::GetModel<C>("delete3"));
 
-  ModelRef<double> refd{ nullptr, 0.0 };           // define a new model ref
+  ModelRef<double> refd{ nullptr, 0.0 };  // define a new model ref
   refd.Bind("delete3", &C::d);
 
   refd = 2.0;
@@ -105,7 +105,7 @@ void test_delete3() {
 
 void do_test() {
   // test model and modelref and ModelSafePtr
-  auto spModel = mvc::m<C>("me");   // create new model.
+  auto spModel = m<C>("me", {});    // create new model.
   spModel->c = 12;                  // update the model value.
   ModelRef<char> r1(0);             // create a model reference.
   r1.Bind("me", &C::c);             // bind the model reference to "a field of a model".
@@ -114,7 +114,7 @@ void do_test() {
 
   double dval = *spCinModel;
 
-  ModelRef<C> cref{ nullptr };            // create a model reference.
+  ModelRef<C> cref{ nullptr }; // create a model reference.
   cref.Bind("me");             // bind the model reference to "model itself".
   cref.SafePtr()->a = 10;      // access the model.
 
@@ -123,18 +123,18 @@ void do_test() {
   test_delete2();
   test_delete3();
 
-  // TODO: ‚±‚±‚ÉƒR[ƒh‚ğ‘}“ü‚µ‚Ä‚­‚¾‚³‚¢B
-  auto spM1 = mvc::m<string>("id", "value");  // create a new model.
+  // TODO: ã“ã“ã«ã‚³ãƒ¼ãƒ‰ã‚’æŒ¿å…¥ã—ã¦ãã ã•ã„ã€‚
+  auto spM1 = m<string>("id", { "value" });   // create a new model.
   MessageBoxA(0, spM1->c_str(), "test", 0);   // the output should be "value".
 
   *spM1 = "new value";                        // update the model value.
   MessageBoxA(0, spM1->c_str(), "test", 0);   // the output should be "new value".
 
-  auto spM2 = mvc::getm<string>("id");        // get the model from its id.
+  auto spM2 = getm<string>("id");             // get the model from its id.
   MessageBoxA(0, spM2->c_str(), "test", 0);   // the output should be "new value".
 
   // create a new view, with btn1 as the id and the following parameter used to initialize the view.
-  auto btn = mvc::v<Button>("btn1", "My Button");
+  auto btn = v<Button>("btn1", "My Button");
 
   // output the text in the view.
   MessageBoxA(0, btn->title.SafePtr()->c_str(), "test", 0);
@@ -161,8 +161,6 @@ void do_test() {
   // Fire the event again. this time will not redraw because the value of the model was not changed.
   btn->FireEvent(1);
 
-
-
   // Fire the event. will redraw the button.
   btn->FireEvent(2);
 
@@ -175,24 +173,25 @@ void do_test() {
   btn->FireEvent(2);
 }
 
-//using namespace mvc;
-
 void do_test2() {
-  string name = "agbc";
-  mvc2::ModelSafePtr<string>{&name, mvc2::SPModel{}};
+  auto view = v<Window>("wndmain",   //id
+                        // æœ¬æ¥åº”è¯¥ç”¨{}å°†ä¸‹é¢çš„å‚æ•°æ‹¬èµ·æ¥ï¼Œä½†æ˜¯Windowçš„æ„é€ å‡½æ•°åªæœ‰ä¸€ä¸ªï¼Œæ‰€ä»¥å¯ä»¥çœç•¥æ‰{}ã€‚
+                        WPViewSet{v<Button>("btnok", "OK"), v<Button>("btncancel", "CANCEL")} //sub views
+                       );
+  auto mok = m<string>("mok", "That's OK!");
+  auto mcancel = m<string>("mcancel", "That's Cancel!");
 
-  mvc2::Button btn{ "btnOK", "OK" };
+  // bind
+  auto btnok = getv<Button>("btnok");
+  btnok->title.Bind("mok");
+  auto btncancel = getv<Button>("btncancel");
+  btncancel->title.Bind("mcancel");
 
-  auto ttlModel = mvc2::m<string>("title", "first value");
-
-  btn.title.Bind("title");
-
-  mvc2::Button btn2{ "btnOK2", "OK" };
-  auto ttlModel2 = mvc2::m<C>("ttl2");
-  btn.ch.Bind<C>("ttl2", &C::c);
+  MessageBoxA(0, btnok->title->c_str(), btncancel->title->c_str(), 0);
 }
 
-// ‚±‚ÌƒR[ƒh ƒ‚ƒWƒ…[ƒ‹‚ÉŠÜ‚Ü‚ê‚éŠÖ”‚ÌéŒ¾‚ğ“]‘—‚µ‚Ü‚·:
+
+// ã“ã®ã‚³ãƒ¼ãƒ‰ ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ã«å«ã¾ã‚Œã‚‹é–¢æ•°ã®å®£è¨€ã‚’è»¢é€ã—ã¾ã™:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
@@ -206,16 +205,18 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
   UNREFERENCED_PARAMETER(hPrevInstance);
   UNREFERENCED_PARAMETER(lpCmdLine);
 
+  App::Start();
   // do some test about the model and view.
-  // do_test();
-  funcusec({ 10, 20, 'Z', 5.8 });
+  // funcusec({10, 20, 'Z', 5.8 });
+  do_test2();
+  App::End();
 
-  // ƒOƒ[ƒoƒ‹•¶š—ñ‚ğ‰Šú‰»‚µ‚Ä‚¢‚Ü‚·B
+  // ã‚°ãƒ­ãƒ¼ãƒãƒ«æ–‡å­—åˆ—ã‚’åˆæœŸåŒ–ã—ã¦ã„ã¾ã™ã€‚
   LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
   LoadStringW(hInstance, IDC_TRYMVC, szWindowClass, MAX_LOADSTRING);
   MyRegisterClass(hInstance);
 
-  // ƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚Ì‰Šú‰»‚ğÀs‚µ‚Ü‚·:
+  // ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã®åˆæœŸåŒ–ã‚’å®Ÿè¡Œã—ã¾ã™:
   if (!InitInstance(hInstance, nCmdShow))
   {
     return FALSE;
@@ -225,7 +226,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
   MSG msg;
 
-  // ƒƒCƒ“ ƒƒbƒZ[ƒW ƒ‹[ƒv:
+  // ãƒ¡ã‚¤ãƒ³ ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ ãƒ«ãƒ¼ãƒ—:
   while (GetMessage(&msg, nullptr, 0, 0))
   {
     if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
@@ -241,9 +242,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 
 //
-//  ŠÖ”: MyRegisterClass()
+//  é–¢æ•°: MyRegisterClass()
 //
-//  –Ú“I: ƒEƒBƒ“ƒhƒE ƒNƒ‰ƒX‚ğ“o˜^‚µ‚Ü‚·B
+//  ç›®çš„: ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ ã‚¯ãƒ©ã‚¹ã‚’ç™»éŒ²ã—ã¾ã™ã€‚
 //
 ATOM MyRegisterClass(HINSTANCE hInstance)
 {
@@ -267,18 +268,18 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 }
 
 //
-//   ŠÖ”: InitInstance(HINSTANCE, int)
+//   é–¢æ•°: InitInstance(HINSTANCE, int)
 //
-//   –Ú“I: ƒCƒ“ƒXƒ^ƒ“ƒX ƒnƒ“ƒhƒ‹‚ğ•Û‘¶‚µ‚ÄAƒƒCƒ“ ƒEƒBƒ“ƒhƒE‚ğì¬‚µ‚Ü‚·B
+//   ç›®çš„: ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ ãƒãƒ³ãƒ‰ãƒ«ã‚’ä¿å­˜ã—ã¦ã€ãƒ¡ã‚¤ãƒ³ ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’ä½œæˆã—ã¾ã™ã€‚
 //
-//   ƒRƒƒ“ƒg:
+//   ã‚³ãƒ¡ãƒ³ãƒˆ:
 //
-//        ‚±‚ÌŠÖ”‚ÅAƒOƒ[ƒoƒ‹•Ï”‚ÅƒCƒ“ƒXƒ^ƒ“ƒX ƒnƒ“ƒhƒ‹‚ğ•Û‘¶‚µA
-//        ƒƒCƒ“ ƒvƒƒOƒ‰ƒ€ ƒEƒBƒ“ƒhƒE‚ğì¬‚¨‚æ‚Ñ•\¦‚µ‚Ü‚·B
+//        ã“ã®é–¢æ•°ã§ã€ã‚°ãƒ­ãƒ¼ãƒãƒ«å¤‰æ•°ã§ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ ãƒãƒ³ãƒ‰ãƒ«ã‚’ä¿å­˜ã—ã€
+//        ãƒ¡ã‚¤ãƒ³ ãƒ—ãƒ­ã‚°ãƒ©ãƒ  ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’ä½œæˆãŠã‚ˆã³è¡¨ç¤ºã—ã¾ã™ã€‚
 //
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
-  hInst = hInstance; // ƒOƒ[ƒoƒ‹•Ï”‚ÉƒCƒ“ƒXƒ^ƒ“ƒXˆ—‚ğŠi”[‚µ‚Ü‚·B
+  hInst = hInstance; // ã‚°ãƒ­ãƒ¼ãƒãƒ«å¤‰æ•°ã«ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹å‡¦ç†ã‚’æ ¼ç´ã—ã¾ã™ã€‚
 
   HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
     CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
@@ -295,13 +296,13 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 }
 
 //
-//  ŠÖ”: WndProc(HWND, UINT, WPARAM, LPARAM)
+//  é–¢æ•°: WndProc(HWND, UINT, WPARAM, LPARAM)
 //
-//  –Ú“I:    ƒƒCƒ“ ƒEƒBƒ“ƒhƒE‚ÌƒƒbƒZ[ƒW‚ğˆ—‚µ‚Ü‚·B
+//  ç›®çš„:    ãƒ¡ã‚¤ãƒ³ ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’å‡¦ç†ã—ã¾ã™ã€‚
 //
-//  WM_COMMAND  - ƒAƒvƒŠƒP[ƒVƒ‡ƒ“ ƒƒjƒ…[‚Ìˆ—
-//  WM_PAINT    - ƒƒCƒ“ ƒEƒBƒ“ƒhƒE‚Ì•`‰æ
-//  WM_DESTROY  - ’†~ƒƒbƒZ[ƒW‚ğ•\¦‚µ‚Ä–ß‚é
+//  WM_COMMAND  - ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®å‡¦ç†
+//  WM_PAINT    - ãƒ¡ã‚¤ãƒ³ ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®æç”»
+//  WM_DESTROY  - ä¸­æ­¢ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¡¨ç¤ºã—ã¦æˆ»ã‚‹
 //
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -311,7 +312,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
   case WM_COMMAND:
   {
     int wmId = LOWORD(wParam);
-    // ‘I‘ğ‚³‚ê‚½ƒƒjƒ…[‚Ì‰ğÍ:
+    // é¸æŠã•ã‚ŒãŸãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®è§£æ:
     switch (wmId)
     {
     case IDM_ABOUT:
@@ -329,7 +330,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
   {
     PAINTSTRUCT ps;
     HDC hdc = BeginPaint(hWnd, &ps);
-    // TODO: HDC ‚ğg—p‚·‚é•`‰æƒR[ƒh‚ğ‚±‚±‚É’Ç‰Á‚µ‚Ä‚­‚¾‚³‚¢...
+    // TODO: HDC ã‚’ä½¿ç”¨ã™ã‚‹æç”»ã‚³ãƒ¼ãƒ‰ã‚’ã“ã“ã«è¿½åŠ ã—ã¦ãã ã•ã„...
     EndPaint(hWnd, &ps);
   }
   break;
@@ -342,7 +343,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
   return 0;
 }
 
-// ƒo[ƒWƒ‡ƒ“î•ñƒ{ƒbƒNƒX‚ÌƒƒbƒZ[ƒW ƒnƒ“ƒhƒ‰[‚Å‚·B
+// ãƒãƒ¼ã‚¸ãƒ§ãƒ³æƒ…å ±ãƒœãƒƒã‚¯ã‚¹ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ ãƒãƒ³ãƒ‰ãƒ©ãƒ¼ã§ã™ã€‚
 INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
   UNREFERENCED_PARAMETER(lParam);

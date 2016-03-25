@@ -5,80 +5,77 @@
  * 发现了值发生了变化，该方法将返回True。
 */
 
-#include <list>
-#include <memory>
-#include "WeakPtrComparer.h"
+#include "Types.h"
 #include "ViewBase.h"
 #include "ModelSafePtr.h"
 
-template<typename T>
-class ModelRef;
+namespace mvc {
+  class ModelBase {
 
-class App;
+  private:
+    WPViewSet m_linkedViews;
 
-class ModelBase {
+  public:
+    virtual bool ModelChanged() = 0;
 
-private:
-  set <PtrView, WeakPtrComparer<ViewBase>> m_linkedViews;
+    void AddBindedView(const WPView &v) {
+      m_linkedViews.insert(v);
+    }
 
-public:
-  virtual bool ModelChanged() = 0;
+    void RemoveBindedView(const WPView &v) {
+      m_linkedViews.erase(v);
+    }
 
-  void AddBindedView(const PtrView &v) {
-    m_linkedViews.insert(v);
-  }
-
-  void RemoveBindedView(const PtrView &v) {
-    m_linkedViews.erase(v);
-  }
-
-  void UpdateBindedViews() {
-    for (auto v : m_linkedViews) {
-      auto pv = v.lock();
-      if (pv) {
-        pv->Draw();
-      }
-      else if (v.expired()) {
-        m_linkedViews.erase(v);
+    void UpdateBindedViews() {
+      for (auto v : m_linkedViews) {
+        auto pv = v.lock();
+        if (pv) {
+          pv->Draw();
+        }
+        else if (v.expired()) {
+          m_linkedViews.erase(v);
+        }
       }
     }
-  }
-};
+  };
 
-template <typename T>
-class Model : public ModelBase {
-  friend class App;
-  friend class ModelRef<T>;
+  template <typename T>
+  class Model : public ModelBase {
+    friend class App;
+    friend class ModelRef<T>;
 
-private:
-  T m_modelCopy;
-  T m_model;
-  weak_ptr<Model<T>> m_wpThis;
+  private:
+    T m_modelCopy;
+    T m_model;
+    weak_ptr<Model<T>> m_wpThis;
 
-  ModelSafePtr<T> get_safeptr() {
-    auto spThis = m_wpThis.lock();
-    if (spThis) {
-      return ModelSafePtr<T>{&m_model, spThis};
-    } else {
-      throw runtime_error("The model has been deleted.");
+    ModelSafePtr<T> get_safeptr() {
+      auto spThis = m_wpThis.lock();
+      if (spThis) {
+        return ModelSafePtr<T>{&m_model, spThis};
+      }
+      else {
+        throw runtime_error("The model has been deleted.");
+      }
     }
-  }
 
-  T* get_ptr() {
-    return &m_model;
-  }
+    T* get_ptr() {
+      return &m_model;
+    }
 
-public:
-  template<typename... Args>
-  Model(Args... args) : m_model(args...) {
-    m_modelCopy = m_model;
-  }
-
-  bool ModelChanged() {
-    bool changed = (m_modelCopy != m_model);
-    if (changed) {
+  public:
+    template<typename... Args>
+    Model(Args... args) : m_model(args...) {
       m_modelCopy = m_model;
     }
-    return changed;
-  }
-};
+
+    bool ModelChanged() {
+      bool changed = (m_modelCopy != m_model);
+      if (changed) {
+        m_modelCopy = m_model;
+      }
+      return changed;
+    }
+  };
+}
+

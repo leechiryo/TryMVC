@@ -41,13 +41,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -151,22 +151,15 @@
   <ItemGroup>
     <ClInclude Include="mvc\App.h" />
     <ClInclude Include="mvc\Button.h" />
-    <ClInclude Include="mvc\MainWindow.h" />
+    <ClInclude Include="mvc\Window.h" />
     <ClInclude Include="mvc\Model.h" />
     <ClInclude Include="mvc\ModelSafePtr.h" />
     <ClInclude Include="mvc\ModelRef.h" />
     <ClInclude Include="mvc\mvc.h" />
-    <ClInclude Include="mvc\new_Button.h" />
-    <ClInclude Include="mvc\new_Model.h" />
-    <ClInclude Include="mvc\new_ModelBase.h" />
-    <ClInclude Include="mvc\new_ModelRef.h" />
-    <ClInclude Include="mvc\new_ModelSafePtr.h" />
-    <ClInclude Include="mvc\new_mvc.h" />
-    <ClInclude Include="mvc\new_View.h" />
-    <ClInclude Include="mvc\new_ViewBase.h" />
     <ClInclude Include="mvc\View.h" />
     <ClInclude Include="mvc\ViewBase.h" />
-    <ClInclude Include="mvc\WeakPtrComparer.h" />
+    <ClInclude Include="mvc\ConstructorProxy.h" />
+    <ClInclude Include="mvc\Types.h" />
     <ClInclude Include="MyController.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
