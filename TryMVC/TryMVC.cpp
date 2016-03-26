@@ -189,8 +189,7 @@ void do_test2() {
 
   //MessageBoxA(0, btnok->title->c_str(), btncancel->title->c_str(), 0);
 
-  view->Update();
-  view->RunMessageLoop();
+  view->Show();
 }
 
 

@@ -27,18 +27,6 @@ namespace mvc {
       return 0;
     }
 
-    static LRESULT Handle_NCCALCSIZE(shared_ptr<Window> wnd, WPARAM wParam, LPARAM lParam) {
-      /*
-      ** From MSDN:
-      ** If the wParam parameter is FALSE, the application should return zero.
-      ** When wParam is TRUE, simply returning 0 without processing the NCCALCSIZE_PARAMS rectangles
-      ** will cause the client area to resize to the size of the window, including the window frame.
-      ** This will remove the window frame and caption items from your window, leaving only the client
-      ** area displayed.
-      */
-      return 0;
-    }
-
     static LRESULT Handle_DESTROY(shared_ptr<Window> wnd, WPARAM wParam, LPARAM lParam) {
       PostQuitMessage(0);
       return 1;
@@ -50,7 +38,6 @@ namespace mvc {
       // Register message handler methods.
       AddEventHandler(WM_SIZE, Handle_SIZE);
       AddEventHandler(WM_DISPLAYCHANGE, Handle_DISPLAYCHANGE);
-      AddEventHandler(WM_NCCALCSIZE, Handle_NCCALCSIZE);
       AddEventHandler(WM_DESTROY, Handle_DESTROY);
 
       // Create window using windows api.
@@ -85,17 +72,6 @@ namespace mvc {
         NULL,
         HINST_THISCOMPONENT,
         this); // pass the this pointer to window parameter
-
-      if (m_hwnd) {
-        // 在Constructor中调用虚函数。本来，如此调用虚函数并不会激发
-        // 对象的多态调用（即调用派生对象的虚函数）。但在此处每个类都负责
-        // 自身所需的D2D资源的创建，所以并不需要调用派生对象的虚函数。
-        // 这么做并没有什么问题。
-        CreateD2DResource();
-
-        ShowWindow(m_hwnd, SW_SHOWNORMAL);
-        UpdateWindow(m_hwnd);
-      }
     }
 
   protected:
@@ -127,6 +103,26 @@ namespace mvc {
       CreateMe();
     }
 
+    void Show() {
+      if (m_hwnd) {
+        // 在Constructor中调用虚函数。本来，如此调用虚函数并不会激发
+        // 对象的多态调用（即调用派生对象的虚函数）。但在此处每个类都负责
+        // 自身所需的D2D资源的创建，所以并不需要调用派生对象的虚函数。
+        // 这么做并没有什么问题。
+        CreateD2DResource();
+
+        ShowWindow(m_hwnd, SW_SHOWNORMAL);
+        UpdateWindow(m_hwnd);
+
+        // Process and dispatch messages
+        MSG msg;
+        while (GetMessage(&msg, NULL, 0, 0)) {
+          TranslateMessage(&msg);
+          DispatchMessage(&msg);
+        }
+      }
+    }
+
     virtual ~Window() {
       SafeRelease(m_pRenderTarget);
     }
@@ -138,16 +134,6 @@ namespace mvc {
 
     void Update() {
       InvalidateRect(m_hwnd, NULL, false);
-    }
-
-    // Process and dispatch messages
-    void RunMessageLoop() {
-      MSG msg;
-
-      while (GetMessage(&msg, NULL, 0, 0)) {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
-      }
     }
 
     // The windows procedure.
@@ -199,6 +185,17 @@ namespace mvc {
             ValidateRect(hwnd, NULL);
 
             result = 0;
+          }
+          else if (message == WM_NCCALCSIZE) {
+            /*
+            ** From MSDN:
+            ** If the wParam parameter is FALSE, the application should return zero.
+            ** When wParam is TRUE, simply returning 0 without processing the NCCALCSIZE_PARAMS rectangles
+            ** will cause the client area to resize to the size of the window, including the window frame.
+            ** This will remove the window frame and caption items from your window, leaving only the client
+            ** area displayed.
+            */
+            return 0;
           }
           else {
             char processed = pDemoApp->HandleMessage(message, wParam, lParam, result);
