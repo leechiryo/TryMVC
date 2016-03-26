@@ -13,7 +13,7 @@ namespace mvc {
     HWND m_hwnd;
 
     // controller method
-    static LRESULT Handle_SIZE(shared_ptr<Window> wnd, WPARAM wParam, LPARAM lParam){
+    static LRESULT Handle_SIZE(shared_ptr<Window> wnd, WPARAM wParam, LPARAM lParam) {
       wnd->m_right = LOWORD(lParam);
       wnd->m_bottom = HIWORD(lParam);
       if (wnd->m_pRenderTarget) {
@@ -22,12 +22,12 @@ namespace mvc {
       return 0;
     }
 
-    static LRESULT Handle_DISPLAYCHANGE(shared_ptr<Window> wnd, WPARAM wParam, LPARAM lParam){
+    static LRESULT Handle_DISPLAYCHANGE(shared_ptr<Window> wnd, WPARAM wParam, LPARAM lParam) {
       InvalidateRect(wnd->m_hwnd, NULL, false);
       return 0;
     }
 
-    static LRESULT Handle_NCCALCSIZE(shared_ptr<Window> wnd, WPARAM wParam, LPARAM lParam){
+    static LRESULT Handle_NCCALCSIZE(shared_ptr<Window> wnd, WPARAM wParam, LPARAM lParam) {
       /*
       ** From MSDN:
       ** If the wParam parameter is FALSE, the application should return zero.
@@ -39,34 +39,12 @@ namespace mvc {
       return 0;
     }
 
-    static LRESULT Handle_DESTROY(shared_ptr<Window> wnd, WPARAM wParam, LPARAM lParam){
+    static LRESULT Handle_DESTROY(shared_ptr<Window> wnd, WPARAM wParam, LPARAM lParam) {
       PostQuitMessage(0);
       return 1;
     }
 
-  protected:
-    virtual void CreateD2DResource() {
-      HRESULT hr = S_OK;
-
-      if (!m_pRenderTarget) {
-        RECT rc;
-        GetClientRect(m_hwnd, &rc);
-
-        D2D1_SIZE_U size = D2D1::SizeU(rc.right, rc.bottom);
-
-        hr = App::s_pDirect2dFactory->CreateHwndRenderTarget(
-          D2D1::RenderTargetProperties(),
-          D2D1::HwndRenderTargetProperties(m_hwnd, size),
-          &m_pRenderTarget);
-      }
-    }
-
-    virtual void DestroyD2DResource() {
-      SafeRelease(m_pRenderTarget);
-    }
-
-  public:
-    Window() {
+    void CreateMe() {
       m_hwnd = nullptr;
 
       // Register message handler methods.
@@ -119,22 +97,61 @@ namespace mvc {
         UpdateWindow(m_hwnd);
       }
     }
-    Window(const WPViewSet & subViews) : View(subViews) { }
+
+  protected:
+    virtual void CreateD2DResource() {
+      HRESULT hr = S_OK;
+
+      if (!m_pRenderTarget) {
+        RECT rc;
+        GetClientRect(m_hwnd, &rc);
+
+        D2D1_SIZE_U size = D2D1::SizeU(rc.right, rc.bottom);
+
+        hr = App::s_pDirect2dFactory->CreateHwndRenderTarget(
+          D2D1::RenderTargetProperties(),
+          D2D1::HwndRenderTargetProperties(m_hwnd, size),
+          &m_pRenderTarget);
+      }
+    }
+
+    virtual void DestroyD2DResource() {
+      SafeRelease(m_pRenderTarget);
+    }
+
+  public:
+    Window() {
+      CreateMe();
+    }
+    Window(const WPViewSet & subViews) : View(subViews) {
+      CreateMe();
+    }
 
     virtual ~Window() {
       SafeRelease(m_pRenderTarget);
     }
 
     void DrawSelf() {
-      MessageBoxA(0, "MainWindow is drawed", "Test", 0);
+      m_pRenderTarget->SetTransform(D2D1::Matrix3x2F::Identity());
+      m_pRenderTarget->Clear(D2D1::ColorF(D2D1::ColorF::White));
+    }
+
+    void Update() {
+      InvalidateRect(m_hwnd, NULL, false);
+    }
+
+    // Process and dispatch messages
+    void RunMessageLoop() {
+      MSG msg;
+
+      while (GetMessage(&msg, NULL, 0, 0)) {
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
+      }
     }
 
     // The windows procedure.
-    static LRESULT CALLBACK WndProc(
-      HWND hwnd,
-      UINT message,
-      WPARAM wParam,
-      LPARAM lParam) {
+    static LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
 
       LRESULT result = 0;
 
@@ -162,7 +179,7 @@ namespace mvc {
           ::GetWindowLongPtr(hwnd, GWLP_USERDATA)));
 
         if (pDemoApp) {
-          if (message == WM_PAINT){
+          if (message == WM_PAINT) {
             // WM_PAINT will never be process by message handler function.
             // It will be process in a special way.
             pDemoApp->m_pRenderTarget->BeginDraw();
@@ -183,9 +200,9 @@ namespace mvc {
 
             result = 0;
           }
-          else{
+          else {
             char processed = pDemoApp->HandleMessage(message, wParam, lParam, result);
-            if (!processed){
+            if (!processed) {
               result = DefWindowProc(hwnd, message, wParam, lParam);
             }
           }

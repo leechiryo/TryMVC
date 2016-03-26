@@ -187,7 +187,10 @@ void do_test2() {
   auto btncancel = getv<Button>("btncancel");
   btncancel->title.Bind("mcancel");
 
-  MessageBoxA(0, btnok->title->c_str(), btncancel->title->c_str(), 0);
+  //MessageBoxA(0, btnok->title->c_str(), btncancel->title->c_str(), 0);
+
+  view->Update();
+  view->RunMessageLoop();
 }
 
 
@@ -202,41 +205,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
   _In_ LPWSTR    lpCmdLine,
   _In_ int       nCmdShow)
 {
-  UNREFERENCED_PARAMETER(hPrevInstance);
-  UNREFERENCED_PARAMETER(lpCmdLine);
-
   App::Initialize();
   // do some test about the model and view.
   // funcusec({10, 20, 'Z', 5.8 });
   do_test2();
+
+
   App::Uninitialize();
-
-  // グローバル文字列を初期化しています。
-  LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
-  LoadStringW(hInstance, IDC_TRYMVC, szWindowClass, MAX_LOADSTRING);
-  MyRegisterClass(hInstance);
-
-  // アプリケーションの初期化を実行します:
-  if (!InitInstance(hInstance, nCmdShow))
-  {
-    return FALSE;
-  }
-
-  HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_TRYMVC));
-
-  MSG msg;
-
-  // メイン メッセージ ループ:
-  while (GetMessage(&msg, nullptr, 0, 0))
-  {
-    if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
-    {
-      TranslateMessage(&msg);
-      DispatchMessage(&msg);
-    }
-  }
-
-  return (int)msg.wParam;
 }
 
 
