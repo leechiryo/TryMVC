@@ -105,10 +105,6 @@ namespace mvc {
 
     void Show() {
       if (m_hwnd) {
-        // 在Constructor中调用虚函数。本来，如此调用虚函数并不会激发
-        // 对象的多态调用（即调用派生对象的虚函数）。但在此处每个类都负责
-        // 自身所需的D2D资源的创建，所以并不需要调用派生对象的虚函数。
-        // 这么做并没有什么问题。
         CreateD2DResource();
 
         ShowWindow(m_hwnd, SW_SHOWNORMAL);

@@ -9,13 +9,13 @@ class MyController {
 
 public:
   static LRESULT DoSomething(shared_ptr<Button> btn, WPARAM msg, LPARAM lp) {
-    btn->title = "Something Done!";
+    btn->title = L"Something Done!";
     auto size = btn->title->length();
     return 1;
   }
 
   static LRESULT DoSomething2(shared_ptr<Button> btn, WPARAM msg, LPARAM lp) {
-    btn->title = "Something2 Done!";
+    btn->title = L"Something2 Done!";
     return 1;
   }
 };

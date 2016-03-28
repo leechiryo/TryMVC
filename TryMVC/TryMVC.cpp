@@ -134,10 +134,10 @@ void do_test() {
   MessageBoxA(0, spM2->c_str(), "test", 0);   // the output should be "new value".
 
   // create a new view, with btn1 as the id and the following parameter used to initialize the view.
-  auto btn = v<Button>("btn1", "My Button");
+  auto btn = v<Button>("btn1", L"My Button");
 
   // output the text in the view.
-  MessageBoxA(0, btn->title.SafePtr()->c_str(), "test", 0);
+  MessageBox(0, btn->title->c_str(), L"test", 0);
 
   // bind the view's field with a model.
   btn->title.Bind("id");
@@ -147,13 +147,13 @@ void do_test() {
   btn->AddEventHandler(2, MyController::DoSomething2);
 
   // the output should be "new value" (the model's value).
-  MessageBoxA(0, btn->title.SafePtr()->c_str(), "test", 0);
+  MessageBox(0, btn->title->c_str(), L"test", 0);
 
   // update the model.
   *spM2 = "button value";
 
   // the output of the view should be "button value" (updated with the model).
-  MessageBoxA(0, btn->title.SafePtr()->c_str(), "test", 0);
+  MessageBox(0, btn->title->c_str(), L"test", 0);
 
   // Fire the event. will redraw the button.
   btn->FireEvent(1);
@@ -176,18 +176,16 @@ void do_test() {
 void do_test2() {
   auto view = v<Window>("wndmain",   //id
                         // 本来应该用{}将下面的参数括起来，但是Window的构造函数只有一个，所以可以省略掉{}。
-                        WPViewSet{v<Button>("btnok", "OK"), v<Button>("btncancel", "CANCEL")} //sub views
+                        WPViewSet{v<Button>("btnok", L"OK"), v<Button>("btncancel", L"CANCEL")} //sub views
                        );
-  auto mok = m<string>("mok", "That's OK!");
-  auto mcancel = m<string>("mcancel", "That's Cancel!");
+  auto mok = m<wstring>("mok", L"That's OK!");
+  auto mcancel = m<wstring>("mcancel", L"That's Cancel!");
 
   // bind
   auto btnok = getv<Button>("btnok");
   btnok->title.Bind("mok");
   auto btncancel = getv<Button>("btncancel");
   btncancel->title.Bind("mcancel");
-
-  //MessageBoxA(0, btnok->title->c_str(), btncancel->title->c_str(), 0);
 
   view->Show();
 }
