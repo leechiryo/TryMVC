@@ -184,8 +184,10 @@ void do_test2() {
   // bind
   auto btnok = getv<Button>("btnok");
   btnok->title.Bind("mok");
+  btnok->SetPos(10, 10, 30, 20);
   auto btncancel = getv<Button>("btncancel");
   btncancel->title.Bind("mcancel");
+  btncancel->SetPos(80, 10, 100, 20);
 
   view->Show();
 }

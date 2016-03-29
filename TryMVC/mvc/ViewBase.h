@@ -134,6 +134,14 @@ namespace mvc {
       m_subViews.erase(v);
     }
 
+    
+    void SetPos(double left, double top, double right, double bottom) {
+      m_left = left;
+      m_top = top;
+      m_right = right;
+      m_bottom = bottom;
+    }
+
   };
 
 }
