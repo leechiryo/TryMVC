@@ -11,6 +11,7 @@ namespace mvc {
   {
   private:
     HWND m_hwnd;
+    ID2D1HwndRenderTarget* m_pRenderTarget = nullptr;
 
     // controller method
     static LRESULT Handle_SIZE(shared_ptr<Window> wnd, WPARAM wParam, LPARAM lParam) {
@@ -99,7 +100,7 @@ namespace mvc {
     Window() {
       CreateMe();
     }
-    Window(const WPViewSet & subViews) : View(subViews) {
+    Window(const WPViewSet & subViews) : View(&m_pRenderTarget, subViews) {
       CreateMe();
     }
 

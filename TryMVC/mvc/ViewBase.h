@@ -31,7 +31,7 @@ namespace mvc {
 
     // 指向Window对象的D2DRenderTarget字段的指针。每个Window都有一个独立的D2DRenderTarget对象，
     // 其内部的所有subview将共享这一对象，并利用该对象进行绘制。
-    ID2D1HwndRenderTarget* m_pRenderTarget = nullptr;
+    ID2D1HwndRenderTarget** m_ppRenderTarget = nullptr;
 
     virtual void CreateD2DResource() = 0;
     virtual void DestroyD2DResource() = 0;
@@ -97,11 +97,12 @@ namespace mvc {
 
     virtual ~ViewBase(){ }
 
-    ViewBase(const WPViewSet & views) : m_subViews(views) {
+    ViewBase(ID2D1HwndRenderTarget** ppRndrTgt, const WPViewSet & views) : m_subViews(views) {
+      m_ppRenderTarget = ppRndrTgt;
       for (auto v : m_subViews){
         auto spv = v.lock();
         if (spv){
-          spv->m_pRenderTarget = m_pRenderTarget;
+          spv->m_ppRenderTarget = m_ppRenderTarget;
         }
       }
     }
