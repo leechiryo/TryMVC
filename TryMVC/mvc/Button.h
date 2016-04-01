@@ -33,6 +33,24 @@ namespace mvc {
     IDWriteTextFormat* m_pTextFormat;
 
   protected:
+  virtual void MouseEnter(float x, float y) {
+    m_pBackgroundBrush = m_pHoverBackgroundBrush;
+
+    RECT rect;
+    GetPixelRect(rect);
+
+    InvalidateRect(m_pRenderTarget->GetHwnd(), &rect, 0);
+  }
+
+  virtual void MouseLeft(float x, float y) {
+    m_pBackgroundBrush = m_pNormalBackgroundBrush;
+
+    RECT rect;
+    GetPixelRect(rect);
+
+    InvalidateRect(m_pRenderTarget->GetHwnd(), &rect, 0);
+  }
+
     virtual void CreateD2DResource() {
       ID2D1HwndRenderTarget* pRndrTgt = *m_ppRenderTarget;
       HRESULT hr = pRndrTgt->CreateSolidColorBrush(
