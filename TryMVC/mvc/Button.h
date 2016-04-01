@@ -33,23 +33,25 @@ namespace mvc {
     IDWriteTextFormat* m_pTextFormat;
 
   protected:
-  virtual void MouseEnter(float x, float y) {
-    m_pBackgroundBrush = m_pHoverBackgroundBrush;
+    virtual void MouseEnter(float x, float y) {
+      m_pBackgroundBrush = m_pHoverBackgroundBrush;
 
-    RECT rect;
-    GetPixelRect(rect);
+      RECT rect;
+      GetPixelRect(rect);
 
-    InvalidateRect(m_pRenderTarget->GetHwnd(), &rect, 0);
-  }
+      ID2D1HwndRenderTarget* pRndrTgt = *m_ppRenderTarget;
+      InvalidateRect(pRndrTgt->GetHwnd(), &rect, 0);
+    }
 
-  virtual void MouseLeft(float x, float y) {
-    m_pBackgroundBrush = m_pNormalBackgroundBrush;
+    virtual void MouseLeft(float x, float y) {
+      m_pBackgroundBrush = m_pNormalBackgroundBrush;
 
-    RECT rect;
-    GetPixelRect(rect);
+      RECT rect;
+      GetPixelRect(rect);
 
-    InvalidateRect(m_pRenderTarget->GetHwnd(), &rect, 0);
-  }
+      ID2D1HwndRenderTarget* pRndrTgt = *m_ppRenderTarget;
+      InvalidateRect(pRndrTgt->GetHwnd(), &rect, 0);
+    }
 
     virtual void CreateD2DResource() {
       ID2D1HwndRenderTarget* pRndrTgt = *m_ppRenderTarget;
@@ -108,6 +110,8 @@ namespace mvc {
         SafeRelease(m_pTextFormat);
         throw new std::runtime_error("Failed to create the brush.");
       }
+
+      m_pBackgroundBrush = m_pNormalBackgroundBrush;
     }
 
     virtual void DestroyD2DResource() {
@@ -136,6 +140,7 @@ namespace mvc {
 
     virtual void DrawSelf() {
       D2D1_RECT_F textRect = D2D1::RectF(m_left, m_top, m_right, m_bottom);
+      (*m_ppRenderTarget)->FillRectangle(textRect, m_pBackgroundBrush);
 
       (*m_ppRenderTarget)->DrawText(
         title->c_str(),

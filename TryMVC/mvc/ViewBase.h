@@ -43,6 +43,13 @@ namespace mvc {
     virtual void MouseLeft(double x, double y) {
     }
 
+    void GetPixelRect(RECT &rect) {
+      rect.left = DipsXToPixels(m_left);
+      rect.top = DipsYToPixels(m_top);
+      rect.right = DipsXToPixels(m_right);
+      rect.bottom = DipsYToPixels(m_bottom);
+    }
+
     void CreateD2DEnvironment() {
       CreateD2DResource();
 
@@ -71,11 +78,11 @@ namespace mvc {
       return static_cast<double>(y) / App::DPI_SCALE_Y;
     }
 
-    int DipsXToPixels(double x){
+    int DipsXToPixels(double x) {
       return static_cast<int>(x * App::DPI_SCALE_X);
     }
 
-    int DipsYToPixels(double y){
+    int DipsYToPixels(double y) {
       return static_cast<int>(y * App::DPI_SCALE_Y);
     }
 
@@ -95,13 +102,13 @@ namespace mvc {
 
     ViewBase() { }
 
-    virtual ~ViewBase(){ }
+    virtual ~ViewBase() { }
 
     ViewBase(ID2D1HwndRenderTarget** ppRndrTgt, const WPViewSet & views) : m_subViews(views) {
       m_ppRenderTarget = ppRndrTgt;
-      for (auto v : m_subViews){
+      for (auto v : m_subViews) {
         auto spv = v.lock();
-        if (spv){
+        if (spv) {
           spv->m_ppRenderTarget = m_ppRenderTarget;
         }
       }
@@ -135,7 +142,7 @@ namespace mvc {
       m_subViews.erase(v);
     }
 
-    
+
     void SetPos(double left, double top, double right, double bottom) {
       m_left = left;
       m_top = top;
