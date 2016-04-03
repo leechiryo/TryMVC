@@ -33,7 +33,7 @@ namespace mvc {
     IDWriteTextFormat* m_pTextFormat;
 
   protected:
-    virtual void MouseEnter(float x, float y) {
+    virtual void MouseEnter(double x, double y) {
       m_pBackgroundBrush = m_pHoverBackgroundBrush;
 
       RECT rect;
@@ -43,7 +43,7 @@ namespace mvc {
       InvalidateRect(pRndrTgt->GetHwnd(), &rect, 0);
     }
 
-    virtual void MouseLeft(float x, float y) {
+    virtual void MouseLeft(double x, double y) {
       m_pBackgroundBrush = m_pNormalBackgroundBrush;
 
       RECT rect;

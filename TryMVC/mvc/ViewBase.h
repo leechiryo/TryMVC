@@ -27,7 +27,7 @@ namespace mvc {
     double m_right;
     double m_bottom;
 
-    bool m_mouseIn;
+    bool m_mouseIn = 0;
 
     // 指向Window对象的D2DRenderTarget字段的指针。每个Window都有一个独立的D2DRenderTarget对象，
     // 其内部的所有subview将共享这一对象，并利用该对象进行绘制。
