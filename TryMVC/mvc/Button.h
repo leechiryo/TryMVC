@@ -32,6 +32,29 @@ namespace mvc {
     ID2D1SolidColorBrush* m_pBrush;
     IDWriteTextFormat* m_pTextFormat;
 
+    // controller method
+    static LRESULT Handle_LBUTTONDOWN(shared_ptr<Button> btn, WPARAM wParam, LPARAM lParam) {
+      btn->m_pBackgroundBrush = btn->m_pClickBackgroundBrush;
+
+      RECT rect;
+      btn->GetPixelRect(rect);
+
+      ID2D1HwndRenderTarget* pRndrTgt = *(btn->m_ppRenderTarget);
+      InvalidateRect(pRndrTgt->GetHwnd(), &rect, 0);
+      return 0;
+    }
+
+    static LRESULT Handle_LBUTTONUP(shared_ptr<Button> btn, WPARAM wParam, LPARAM lParam) {
+      btn->m_pBackgroundBrush = btn->m_pHoverBackgroundBrush;
+
+      RECT rect;
+      btn->GetPixelRect(rect);
+
+      ID2D1HwndRenderTarget* pRndrTgt = *(btn->m_ppRenderTarget);
+      InvalidateRect(pRndrTgt->GetHwnd(), &rect, 0);
+      return 0;
+    }
+
   protected:
     virtual void MouseEnter(double x, double y) {
       m_pBackgroundBrush = m_pHoverBackgroundBrush;
@@ -135,6 +158,9 @@ namespace mvc {
       m_fontStretch = DWRITE_FONT_STRETCH_NORMAL;
       wcscpy_s(m_font, MAX_CHARS + 1, L"Arial");
       m_fontSize = 16.0;
+
+      AddEventHandler(WM_LBUTTONDOWN, Handle_LBUTTONDOWN);
+      AddEventHandler(WM_LBUTTONUP, Handle_LBUTTONUP);
     }
 
     ~Button() {
