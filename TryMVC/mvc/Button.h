@@ -92,6 +92,9 @@ namespace mvc {
         L"ja-JP",
         &m_pTextFormat);
 
+      m_pTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+      m_pTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+
       if (!SUCCEEDED(hr)) {
         SafeRelease(m_pNormalBackgroundBrush);
         SafeRelease(m_pHoverBackgroundBrush);
@@ -121,7 +124,6 @@ namespace mvc {
       SafeRelease(m_pTextFormat);
       SafeRelease(m_pBrush);
     }
-
 
   public:
     ModelRef<wstring> title;
