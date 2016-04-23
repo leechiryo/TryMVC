@@ -101,7 +101,5 @@ namespace mvc {
         App::UpdateViews();
       }
     }
-
-
   };
 }
