@@ -92,7 +92,7 @@ namespace mvc {
       shTop = ScreenAlign(shTop);
       shBot = ScreenAlign(shBot);
 
-      D2D1_RECT_F textRect = D2D1::RectF(ScreenAlign(m_left), enTop, ScreenAlign(m_right), enBot);
+      D2D1_RECT_F textRect = RectD(ScreenAlign(m_left), enTop, ScreenAlign(m_right), enBot);
       double mid = ScreenAlign((m_left + m_right) / 2);
 
       // draw entity
@@ -105,8 +105,8 @@ namespace mvc {
 
       // draw border and shadow lines
       pRndrTgt->DrawRectangle(textRect, m_pBorderBrush);
-      pRndrTgt->DrawLine(D2D1::Point2F(mid, shTop), D2D1::Point2F(mid, enTop), m_pBorderBrush);
-      pRndrTgt->DrawLine(D2D1::Point2F(mid, shBot), D2D1::Point2F(mid, enBot), m_pBorderBrush);
+      pRndrTgt->DrawLine(Point2D(mid, shTop), Point2D(mid, enTop), m_pBorderBrush);
+      pRndrTgt->DrawLine(Point2D(mid, shBot), Point2D(mid, enBot), m_pBorderBrush);
     }
 
   };

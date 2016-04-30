@@ -18,14 +18,10 @@ namespace mvc {
 
     static const int MAX_CHARS = 256;
     wchar_t m_font[MAX_CHARS + 1];
-    wchar_t m_locale[MAX_CHARS + 1];
-
+    float m_fontSize;
     DWRITE_FONT_WEIGHT m_fontWeight;
     DWRITE_FONT_STYLE m_fontStyle;
     DWRITE_FONT_STRETCH m_fontStretch;
-    float m_fontSize;
-
-    DWRITE_TEXT_ALIGNMENT m_alignment;
 
     UINT32 m_color;
 
@@ -167,7 +163,7 @@ namespace mvc {
     }
 
     virtual void DrawSelf() {
-      D2D1_RECT_F textRect = D2D1::RectF(m_left, m_top, m_right, m_bottom);
+      D2D1_RECT_F textRect = RectD(m_left, m_top, m_right, m_bottom);
       (*m_ppRenderTarget)->FillRectangle(textRect, m_pBackgroundBrush);
 
       (*m_ppRenderTarget)->DrawText(
