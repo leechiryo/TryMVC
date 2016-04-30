@@ -10,6 +10,7 @@
 #include "mvc\mvc.h"
 #include "mvc\ModelRef.h"
 #include "mvc\ConstructorProxy.h"
+#include "mvc\Candle.h"
 
 #include "MyController.h"
 
@@ -174,9 +175,12 @@ void do_test() {
 }
 
 void do_test2() {
+
+  // parameters: o, h, l, c
+  BarPrice p{ 14430, 14510, 14388, 14480};
   auto view = v<Window>("wndmain",   //id
                         // 本来应该用{}将下面的参数括起来，但是Window的构造函数只有一个，所以可以省略掉{}。
-                        WPViewSet{v<Button>("btnok", L"OK"), v<Button>("btncancel", L"CANCEL")} //sub views
+                        WPViewSet{v<Button>("btnok", L"OK"), v<Button>("btncancel", L"CANCEL"), v<Candle>("cdl1", p)} //sub views
                        );
   auto mok = m<wstring>("mok", L"That's OK!");
   auto mcancel = m<wstring>("mcancel", L"That's Cancel!");
@@ -188,6 +192,9 @@ void do_test2() {
   auto btncancel = getv<Button>("btncancel");
   btncancel->title.Bind("mcancel");
   btncancel->SetPos(380, 260, 600, 300);
+
+  auto cdl = getv<Candle>("cdl1");
+  cdl->SetPos(291, 0, 297, 600);
 
   view->Show();
 }

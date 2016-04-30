@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Types.h"
 #include "View.h"
@@ -10,11 +10,15 @@ namespace mvc {
 
   private:
     ModelRef<BarPrice> m_price;
-    ModelRef<double> m_width;
 
     ID2D1SolidColorBrush* m_pUpBarBrush;
     ID2D1SolidColorBrush* m_pDnBarBrush;
     ID2D1SolidColorBrush* m_pBorderBrush;
+
+    double ScreenAlign(double price) {
+      int ip = static_cast<int>(price);
+      return ip + 0.5;
+    }
 
   protected:
 
@@ -29,7 +33,7 @@ namespace mvc {
       }
 
       hr = pRndrTgt->CreateSolidColorBrush(
-        D2D1::ColorF(0x660000),  // red down bar
+        D2D1::ColorF(0xcc0000),  // red down bar
         &m_pDnBarBrush);
 
       if (!SUCCEEDED(hr)) {
@@ -38,7 +42,7 @@ namespace mvc {
       }
 
       hr = pRndrTgt->CreateSolidColorBrush(
-        D2D1::ColorF(0x202020),   // gray boader
+        D2D1::ColorF(0x000000),   // gray boader
         &m_pBorderBrush);
 
       if (!SUCCEEDED(hr)) {
@@ -56,8 +60,8 @@ namespace mvc {
 
   public:
 
-    Candle(const BarPrice &b, const double &width)
-      : m_price{ this, b }, m_width{ this,width } {
+    Candle(const BarPrice &b)
+      : m_price{ this, b } {
     }
 
     ~Candle() {
@@ -71,16 +75,39 @@ namespace mvc {
       double upperHeight = m_price->High - max(m_price->Open, m_price->Close);
       double lowerHeight = min(m_price->Open, m_price->Close) - m_price->Low;
 
-      D2D1_RECT_F textRect = D2D1::RectF(m_left, m_top, m_right, m_bottom);
+      double viewMaxPrice = 15000.0;
+      double viewMinPrice = 14000.0;
+      double viewHeight = 600.0;
 
+      // 实体高点，低点屏幕坐标
+      double enTop = (viewMaxPrice - max(m_price->Open, m_price->Close)) * viewHeight / (viewMaxPrice - viewMinPrice);
+      double enBot = (viewMaxPrice - min(m_price->Open, m_price->Close)) * viewHeight / (viewMaxPrice - viewMinPrice);
+
+      // 上影线高点，下影线低点屏幕坐标
+      double shTop = (viewMaxPrice - m_price->High) * viewHeight / (viewMaxPrice - viewMinPrice);
+      double shBot = (viewMaxPrice - m_price->Low) * viewHeight / (viewMaxPrice - viewMinPrice);
+
+      enTop = ScreenAlign(enTop);
+      enBot = ScreenAlign(enBot);
+      shTop = ScreenAlign(shTop);
+      shBot = ScreenAlign(shBot);
+
+      D2D1_RECT_F textRect = D2D1::RectF(ScreenAlign(m_left), enTop, ScreenAlign(m_right), enBot);
+      double mid = ScreenAlign((m_left + m_right) / 2);
+
+      // draw entity
       if (m_price->Open > m_price->Close) {
         pRndrTgt->FillRectangle(textRect, m_pDnBarBrush);
       }
       else {
         pRndrTgt->FillRectangle(textRect, m_pUpBarBrush);
       }
-    }
 
+      // draw border and shadow lines
+      pRndrTgt->DrawRectangle(textRect, m_pBorderBrush);
+      pRndrTgt->DrawLine(D2D1::Point2F(mid, shTop), D2D1::Point2F(mid, enTop), m_pBorderBrush);
+      pRndrTgt->DrawLine(D2D1::Point2F(mid, shBot), D2D1::Point2F(mid, enBot), m_pBorderBrush);
+    }
 
   };
 }
