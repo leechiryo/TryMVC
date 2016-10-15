@@ -32,7 +32,7 @@ struct C {
   int b;
   char c;
   double d;
- 
+
   ~C() {
 
     stringstream ss;
@@ -50,11 +50,11 @@ bool operator!=(const C &x, const C &y) {
   return !(x == y);
 }
 
-void funcusec(const C& c){
-    stringstream ss;
-    ss << "C'c value is [" << c.c << "]" << endl;
+void funcusec(const C& c) {
+  stringstream ss;
+  ss << "C'c value is [" << c.c << "]" << endl;
 
-    MessageBoxA(0, ss.str().c_str(), "test", 0);
+  MessageBoxA(0, ss.str().c_str(), "test", 0);
 }
 
 template<typename T>
@@ -70,7 +70,7 @@ void test_delete() {
   App::RemoveModel("delete");  // ** model deleted here.
 }
 
-void stubfunc(ModelSafePtr<C> ptr) { 
+void stubfunc(ModelSafePtr<C> ptr) {
 }
 
 // test the model delete.
@@ -175,17 +175,23 @@ void do_test() {
   btn->FireEvent(2);
 }
 
+LRESULT Exit(shared_ptr<Button> btn, WPARAM wParam, LPARAM lParam) {
+  auto view = getv<Window>("wndmain");
+  view->Close();
+  return 0;
+}
+
 void do_test2() {
 
   // parameters: o, h, l, c
-  BarPrice p{ 14430, 14510, 14388, 14480};
+  BarPrice p{ 14430, 14510, 14388, 14480 };
   auto view = v<Window>("wndmain",   //id
                         // 本来应该用{}将下面的参数括起来，但是Window的构造函数只有一个，所以可以省略掉{}。
-                        WPViewSet{v<Button>("btnok", L"OK"), 
-                                  v<Button>("btncancel", L"CANCEL"), 
-                                  v<TextBox>("tbx1", L"Love"),
-                                  v<Candle>("cdl1", p)} //sub views
-                       );
+    WPViewSet{ v<Button>("btnok", L"OK"),
+              v<Button>("btncancel", L"CANCEL"),
+              v<TextBox>("tbx1", L"Love"),
+              v<Candle>("cdl1", p) } //sub views
+  );
   auto mok = m<wstring>("mok", L"That's OK!");
   auto mcancel = m<wstring>("mcancel", L"That's Cancel!");
   auto mtbx = m<wstring>("mtbx1", L"Love");
@@ -198,6 +204,9 @@ void do_test2() {
   btncancel->title.Bind("mcancel");
   btncancel->SetPos(380, 260, 600, 300);
 
+  // set event handler
+  btncancel->AddEventHandler(WM_LBUTTONUP, Exit);
+
   auto cdl = getv<Candle>("cdl1");
   cdl->SetPos(291, 0, 297, 600);
 
@@ -207,6 +216,7 @@ void do_test2() {
 
   view->Show();
 }
+
 
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
