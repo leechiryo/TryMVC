@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <set>
+#include <d2d1.h>
 
 namespace mvc {
 
@@ -44,6 +45,23 @@ namespace mvc {
       pT = nullptr;
     }
   }
+
+  template<class T>
+  inline D2D1_RECT_F RectD(T l, T t, T r, T b) {
+    return D2D1::RectF(
+      static_cast<float>(l),
+      static_cast<float>(t),
+      static_cast<float>(r),
+      static_cast<float>(b));
+  }
+
+  template<class T>
+  inline D2D1_POINT_2F Point2D(T x, T y) {
+    return D2D1::Point2F(
+      static_cast<float>(x),
+      static_cast<float>(y));
+  }
+
 
 #ifndef Assert
 #if defined( DEBUG ) || defined( _DEBUG )

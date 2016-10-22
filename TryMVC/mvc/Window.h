@@ -33,6 +33,7 @@ namespace mvc {
       return 1;
     }
 
+
     void CreateMe() {
       m_hwnd = nullptr;
 
@@ -136,6 +137,10 @@ namespace mvc {
 
     void Update() {
       InvalidateRect(m_hwnd, NULL, false);
+    }
+
+    void Close() {
+      CloseWindow(m_hwnd);
     }
 
     // The windows procedure.

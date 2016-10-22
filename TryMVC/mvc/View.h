@@ -33,16 +33,18 @@ namespace mvc {
         auto spv = v.lock();
         if (!spv) continue;
         if (isMouseEvent) {
+          // TODO: 遇到mouse事件，判断该事件是否表示进入某个子view，
+          // 如果是，则向该子view发送WM_MOUSEHOVER消息或WM_MOUSELEAVE消息
           double dipX = PixelsToDipsX(pixelX);
           double dipY = PixelsToDipsY(pixelY);
 
           if (!spv->HitTest(dipX, dipY)) {
-            // Mouse event should be processed only when it is
-            // occured in the element's area.
             if (spv->m_mouseIn) {
               spv->m_mouseIn = 0;
               spv->MouseLeft(dipX, dipY);
             }
+            // Mouse event should be processed only when it is
+            // occured in the element's area.
             continue;
           }
           else {
@@ -99,7 +101,5 @@ namespace mvc {
         App::UpdateViews();
       }
     }
-
-
   };
 }

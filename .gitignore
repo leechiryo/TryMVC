@@ -213,3 +213,4 @@ ModelManifest.xml
 
 # VS2015 update 1
 *.VC.opendb
+*.VC.db
