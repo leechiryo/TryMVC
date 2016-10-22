@@ -4,6 +4,8 @@
 #include "View.h"
 #include "ModelRef.h"
 
+#define GCL_HCURSOR         (-12)
+
 namespace mvc {
   class TextBox : public View<TextBox> {
 

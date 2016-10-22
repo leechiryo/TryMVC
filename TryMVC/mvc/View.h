@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include <vector>
 #include "ViewBase.h"
 #include "App.h"
 
@@ -12,7 +13,7 @@ namespace mvc {
     friend class App;
 
   private:
-    map<int, ControllerMethod> m_eventHandlers;
+    map<int, vector<ControllerMethod> > m_eventHandlers;
 
   protected:
 
@@ -69,7 +70,9 @@ namespace mvc {
       if (it != m_eventHandlers.end()) {
         auto spThis = m_wpThis.lock();
         if (spThis){
-          result = (it->second)(dynamic_pointer_cast<DerivedType>(spThis), wParam, lParam);
+          for (auto handler : it->second){
+            result = handler(dynamic_pointer_cast<DerivedType>(spThis), wParam, lParam);
+          }
           return 1;  // Notify to parent element that it processed the message.
         }
       }
@@ -88,7 +91,12 @@ namespace mvc {
 
     void AddEventHandler(int msg, ControllerMethod method) {
       if (m_eventHandlers.find(msg) == m_eventHandlers.end()) {
-        m_eventHandlers.insert({ msg, method });
+        vector<ControllerMethod>* handlers = new vector<ControllerMethod>();
+        handlers->push_back(method);
+        m_eventHandlers.insert({ msg, *handlers });
+      }
+      else{
+        m_eventHandlers[msg].push_back(method);
       }
     }
 
@@ -96,7 +104,9 @@ namespace mvc {
       if (m_eventHandlers.find(msg) != m_eventHandlers.end()) {
         auto sharedthis = m_wpThis.lock();
         if (sharedthis) {
-          m_eventHandlers[msg](dynamic_pointer_cast<DerivedType>(sharedthis), msg, 0);
+          for (auto handler : m_eventHandlers[msg]){
+            handler(dynamic_pointer_cast<DerivedType>(sharedthis), msg, 0);
+          }
         }
         App::UpdateViews();
       }
