@@ -156,7 +156,7 @@ namespace mvc {
       m_fontWeight = DWRITE_FONT_WEIGHT_REGULAR;
       m_fontStyle = DWRITE_FONT_STYLE_NORMAL;
       m_fontStretch = DWRITE_FONT_STRETCH_NORMAL;
-      wcscpy_s(m_font, MAX_CHARS + 1, L"Arial");
+      wcscpy_s(m_font, MAX_CHARS + 1, L"Source Code Pro");
       m_fontSize = 16.0;
 
       AddEventHandler(WM_LBUTTONDOWN, Handle_LBUTTONDOWN);
